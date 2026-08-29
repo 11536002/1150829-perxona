@@ -1,18 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>騙騙不信 | 沉浸式防詐對戰</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         :root {
             --primary: #F43F5E;
             --primary-hover: #E11D48;
             --bg-color: #0F172A;
-            --panel-bg: rgba(15, 23, 42, 0.7);
+            --panel-bg: rgba(15, 23, 42, 0.4);
             --border-color: rgba(255, 255, 255, 0.15);
         }
 
@@ -21,528 +20,205 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        body,
-        html {
+        body, html {
             margin: 0;
             padding: 0;
             width: 100vw;
             height: 100vh;
             background-color: var(--bg-color);
             color: #F8FAFC;
-            overflow: hidden;
-            /* 全螢幕無滾動 */
+            overflow: hidden; /* 全螢幕無滾動 */
         }
 
         /* 導覽列 (Top Navbar) */
         nav {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 40px;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
             z-index: 50;
         }
-
         .logo {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: white;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 1.4rem; font-weight: 900; color: white; display: flex; align-items: center; text-decoration: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
-
-        .controls {
-            display: flex;
-            gap: 12px;
-        }
-
+        .controls { display: flex; gap: 12px; }
         .tab-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #CBD5E1;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 10px 18px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            backdrop-filter: blur(4px);
-            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.1); color: #CBD5E1; border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.3s;
+            backdrop-filter: blur(4px); letter-spacing: 1px;
         }
-
-        .tab-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(244, 63, 94, 0.6);
-        }
+        .tab-btn:hover { background: rgba(255, 255, 255, 0.2); color: white; transform: translateY(-2px); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0 15px rgba(244, 63, 94, 0.6); }
 
         /* 全螢幕 Avatar (底層) */
         .avatar-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0;
             background: radial-gradient(circle at center, #1E293B 0%, #0F172A 100%);
         }
-
         sv-presenter {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 100%; height: 100%; object-fit: cover;
         }
-
-        /* 連線遮罩 */
         #loading-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: white;
-            z-index: 10;
+            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2rem; font-weight: bold; color: white; z-index: 10;
         }
-
-        /* 受擊紅光 */
         #damage-overlay {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle, transparent 30%, rgba(239, 68, 68, 0.7) 120%);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 20;
-            transition: opacity 0.3s;
+            position: absolute; inset: 0;
+            background: radial-gradient(circle, transparent 30%, rgba(239,68,68,0.7) 120%);
+            opacity: 0; pointer-events: none; z-index: 20; transition: opacity 0.3s;
         }
-
-        .damage-flash #damage-overlay {
-            opacity: 1;
-            transition: opacity 0.1s;
+        #victory-overlay {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle, transparent 30%, rgba(16,185,129,0.7) 120%);
+            opacity: 0; pointer-events: none; z-index: 20; transition: opacity 0.3s;
         }
+        .damage-flash #damage-overlay { opacity: 1; transition: opacity 0.1s; }
+        .victory-flash #victory-overlay { opacity: 1; transition: opacity 0.1s; }
 
         /* HUD 層 (遊戲化介面) */
         .hud-layer {
-            position: absolute;
-            inset: 0;
-            top: 70px;
-            pointer-events: none;
-            z-index: 30;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            padding: 20px;
+            position: absolute; inset: 0; top: 70px; pointer-events: none; z-index: 30;
+            display: flex; flex-direction: column; overflow: hidden; padding: 20px;
         }
-
         .glass-panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            pointer-events: auto;
-            /* 允許點擊 */
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            pointer-events: auto; /* 允許點擊 */
         }
 
-        /* 頂部血條面板 */
-        .game-hud {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 650px;
-            padding: 12px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        /* 雙方對戰 VS 血條 (頭部) */
+        .vs-hud {
+            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+            width: 850px; display: flex; align-items: center; justify-content: space-between;
+            pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            border-radius: 40px; border: 1px solid rgba(255,255,255,0.2); padding: 15px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
-        .hp-section {
-            flex: 1;
-            margin: 0 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        .hp-side { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .user-side { text-align: left; margin-right: 30px; }
+        .ai-side { text-align: right; margin-left: 30px; }
+        
+        .hp-label { font-weight: bold; margin-bottom: 6px; font-size: 1.1rem; color: #E2E8F0; text-shadow: 0 1px 2px #000; }
+        .hp-bar-bg { background: rgba(0,0,0,0.7); height: 22px; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.15); box-shadow: inset 0 2px 5px rgba(0,0,0,0.6); }
+        .hp-bar-fill { 
+            height: 100%; width: 100%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.3);
         }
+        .hp-user-fill { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+        .hp-ai-fill { background: linear-gradient(90deg, #F59E0B, #FBBF24); transform-origin: right; float: right; }
+        
+        .hp-user-fill.danger, .hp-ai-fill.danger { background: linear-gradient(90deg, #EF4444, #F87171); animation: pulse-danger 1s infinite alternate; }
 
-        .hp-label {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            margin-bottom: 6px;
-            font-size: 1.05rem;
-            color: #E2E8F0;
-            text-shadow: 0 1px 2px #000;
-        }
-
-        .hp-bar-bg {
-            background: rgba(0, 0, 0, 0.6);
-            height: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
-        }
-
-        .hp-bar-fill {
-            background: linear-gradient(90deg, #10B981, #34D399);
-            height: 100%;
-            width: 100%;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
-            box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.4);
-        }
-
-        .hp-bar-fill.warning {
-            background: linear-gradient(90deg, #F59E0B, #FBBF24);
-        }
-
-        .hp-bar-fill.danger {
-            background: linear-gradient(90deg, #EF4444, #F87171);
-            animation: pulse-danger 1s infinite alternate;
-        }
-
-        .score-display {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #FBBF24;
-            text-shadow: 0 0 15px rgba(251, 191, 36, 0.8);
-            line-height: 1;
-            margin-top: 4px;
+        .vs-badge { 
+            font-size: 2.2rem; font-weight: 900; font-style: italic; color: #F43F5E; text-shadow: 0 0 15px rgba(244, 63, 94, 0.8), 2px 2px 0 #000; 
+            margin: 0 10px; line-height: 1;
         }
 
         /* 左側解析儀 */
         .analyzer-panel {
-            position: absolute;
-            top: 120px;
-            left: 40px;
-            width: 420px;
-            max-height: calc(100vh - 180px);
-            padding: 22px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
+            position: absolute; top: 120px; left: 40px; width: 420px; max-height: calc(100vh - 180px);
+            padding: 22px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;
         }
+        .analyzer-panel::-webkit-scrollbar { display: none; }
+        .analyzer-header { font-weight: 900; font-size: 1.25rem; color: #38BDF8; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
+        .analyzer-content { background: rgba(0,0,0,0.5); padding: 18px; border-radius: 12px; font-size: 1.1rem; line-height: 1.5; color: #94A3B8; display: flex; align-items: flex-start; transition: 0.3s; border-left: 5px solid transparent; }
+        .analyzer-content.scanning { color: #38BDF8; border-color: #38BDF8; animation: pulse 2s infinite; }
+        .analyzer-content.alert-warning { background: rgba(245, 158, 11, 0.2); border-color: #F59E0B; color: #FDE68A; }
+        .analyzer-content.alert-danger { background: rgba(239, 68, 68, 0.2); border-color: #EF4444; color: #FECACA; }
 
-        .analyzer-panel::-webkit-scrollbar {
-            display: none;
-        }
-
-        .analyzer-header {
-            font-weight: 900;
-            font-size: 1.25rem;
-            color: #38BDF8;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 12px;
-        }
-
-        .analyzer-content {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 18px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            line-height: 1.5;
-            color: #94A3B8;
-            display: flex;
-            align-items: flex-start;
-            transition: 0.3s;
-            border-left: 5px solid transparent;
-        }
-
-        .analyzer-content.scanning {
-            color: #38BDF8;
-            border-color: #38BDF8;
-            animation: pulse 2s infinite;
-        }
-
-        .analyzer-content.alert-warning {
-            background: rgba(245, 158, 11, 0.15);
-            border-color: #F59E0B;
-            color: #FDE68A;
-        }
-
-        .analyzer-content.alert-danger {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: #EF4444;
-            color: #FECACA;
-        }
-
-        /* 右側巨型對話框 */
+        /* 右側巨型對話框 (無底框，純透明容器) */
         .chat-panel {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
-            width: 550px;
-            height: calc(100vh - 180px);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            position: absolute; bottom: 30px; right: 40px; width: 600px; height: calc(100vh - 200px);
+            display: flex; flex-direction: column; overflow: hidden; pointer-events: none;
         }
-
-        .chat-header {
-            padding: 15px 25px;
-            border-bottom: 1px solid var(--border-color);
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #F8FAFC;
-            background: rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
         .chat-log {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            scroll-behavior: smooth;
+            flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth;
+            /* 隱藏滾動條但保持滾動 */
         }
-
-        .chat-log::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .chat-log::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-        }
-
+        .chat-log::-webkit-scrollbar { display: none; }
+        
+        /* Message Bubbles 帶有玻璃擬態 */
         .chat-message {
-            max-width: 85%;
-            padding: 15px 20px;
-            border-radius: 20px;
-            font-size: 1.15rem;
-            line-height: 1.5;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-            word-wrap: break-word;
-            position: relative;
+            max-width: 85%; padding: 16px 22px; border-radius: 20px; font-size: 1.15rem; line-height: 1.5;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); word-wrap: break-word; position: relative; pointer-events: auto;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         }
-
         .chat-message.user {
-            align-self: flex-end;
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: white;
-            border-bottom-right-radius: 4px;
+            align-self: flex-end; background: rgba(59, 130, 246, 0.8); border: 1px solid rgba(59, 130, 246, 0.4);
+            color: white; border-bottom-right-radius: 4px;
         }
-
         .chat-message.assistant {
-            align-self: flex-start;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            border-bottom-left-radius: 4px;
-            backdrop-filter: blur(10px);
+            align-self: flex-start; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.15);
+            color: white; border-bottom-left-radius: 4px;
         }
-
+        
+        /* Input 表單的玻璃擬態設計 */
         .chat-form {
-            display: flex;
-            padding: 18px 25px;
-            gap: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-top: 1px solid var(--border-color);
+            display: flex; padding: 15px 20px; gap: 15px; background: rgba(0,0,0,0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+            pointer-events: auto; align-items: center; margin-top: 15px; margin-right:10px; margin-left: 10px;
         }
-
         .chat-input {
-            flex: 1;
-            padding: 15px 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1.15rem;
-            outline: none;
-            transition: 0.3s;
+            flex: 1; padding: 10px 15px; border: none; background: transparent; color: white; font-size: 1.15rem; outline: none;
         }
-
-        .chat-input:focus {
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.15);
+        .chat-input::placeholder { color: #CBD5E1; }
+        .mic-btn, .send-btn {
+            width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; display: flex;
+            justify-content: center; align-items: center; font-size: 1.3rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
-        .chat-input::placeholder {
-            color: #CBD5E1;
-        }
-
-        .mic-btn,
-        .send-btn {
-            width: 55px;
-            height: 55px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.4rem;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        }
-
-        .mic-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .mic-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-        }
-
-        .mic-btn.recording {
-            background: #EF4444;
-            color: white;
-            animation: pulse 1.5s infinite;
-            border-color: #EF4444;
-        }
-
-        .send-btn {
-            background: var(--primary);
-            color: white;
-        }
-
-        .send-btn:hover {
-            background: var(--primary-hover);
-            transform: scale(1.05);
-        }
+        .mic-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); }
+        .mic-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
+        .mic-btn.recording { background: #EF4444; color: white; animation: pulse 1.5s infinite; border-color: #EF4444; }
+        .send-btn { background: var(--primary); color: white; }
+        .send-btn:hover { background: var(--primary-hover); transform: scale(1.05); }
 
         /* 動畫 */
-        @keyframes pulse-danger {
-            from {
-                opacity: 1;
-            }
-
-            to {
-                opacity: 0.7;
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-
-            100% {
-                opacity: 1;
-            }
-        }
-
+        @keyframes pulse-danger { from { opacity: 1; } to { opacity: 0.7; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        
         @keyframes popUpFade {
-            0% {
-                transform: translate(-50%, -50%) translateY(20px) scale(0.5);
-                opacity: 0;
-            }
-
-            10% {
-                transform: translate(-50%, -50%) translateY(-10px) scale(1.1);
-                opacity: 1;
-            }
-
-            80% {
-                transform: translate(-50%, -50%) translateY(-40px) scale(1);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translate(-50%, -50%) translateY(-80px) scale(1.05);
-                opacity: 0;
-            }
+            0% { transform: translate(-50%, -50%) translateY(20px) scale(0.5); opacity: 0; }
+            10% { transform: translate(-50%, -50%) translateY(-10px) scale(1.1); opacity: 1; }
+            80% { transform: translate(-50%, -50%) translateY(-40px) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) translateY(-80px) scale(1.05); opacity: 0; }
         }
-
         .floating-text {
-            position: fixed;
-            font-size: 2.2rem;
-            font-weight: 900;
-            pointer-events: none;
-            z-index: 9999;
-            left: 50%;
-            top: 50%;
+            position: fixed; font-size: 2.2rem; font-weight: 900; pointer-events: none; z-index: 9999; left: 50%; top: 50%;
             animation: popUpFade 2.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-shadow: 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000;
         }
-
-        .float-dmg {
-            color: #EF4444;
-        }
-
-        .float-heal {
-            color: #10B981;
-            font-size: 1.6rem;
-        }
-
-        .float-score {
-            color: #FBBF24;
-            font-size: 2.8rem;
-        }
-
+        .float-dmg { color: #EF4444; }
+        .float-heal { color: #3B82F6; font-size: 1.8rem; }
+        .float-dmg-ai { color: #10B981; font-size: 2rem; }
+        
         @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            20%,
-            60% {
-                transform: translateX(-15px) rotate(-1deg);
-            }
-
-            40%,
-            80% {
-                transform: translateX(15px) rotate(1deg);
-            }
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-15px) rotate(-1deg); }
+            40%, 80% { transform: translateX(15px) rotate(1deg); }
         }
-
-        .shake-active {
-            animation: shake 0.4s;
-        }
+        .shake-active { animation: shake 0.4s; }
     </style>
-
 </head>
 
 <body>
     <nav>
         <a href="index.html" class="logo">
-            <img src="images/騙騙不信logo.png"
-                style="height:42px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.3); margin-right:12px;">
+            <img src="images/騙騙不信logo.png" style="height:42px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.3); margin-right:12px;"> 
             騙騙不信
         </a>
         <div class="controls">
-            <button class="tab-btn active" data-id="01M15VG1A8Z67H2H4HNJ668N6Q" data-avatar-id="YQhYp8"
-                data-scene-id="01JCTKCA896FR17K1C57NFF33H">電商詐騙</button>
-            <button class="tab-btn" data-id="01M16NND10JAG3YSS8ZDK5FKYD" data-avatar-id="pLAnKj"
-                data-scene-id="01JCTKQZ2X3P782974Z89WBN51">電話投資詐騙</button>
-            <button class="tab-btn" data-id="01M18146XZWBNV8XJ6Z3G5A2XW" data-avatar-id="yvX5iS"
-                data-scene-id="01JF55WXY99R0A1137NBDH4X2D">路邊推銷</button>
-            <button class="tab-btn" data-id="01M181G26DBT5X3G4R2YY9Y18K" data-avatar-id="WbXy5k"
-                data-scene-id="01J58A46RGFK59J678AHR32R72" data-voice-id="01J7K3EKS6K74Y2XNPGYZ9N8XN">熟人多層次傳銷</button>
+            <button class="tab-btn active" data-id="01M15VG1A8Z67H2H4HNJ668N6Q" data-avatar-id="YQhYp8" data-scene-id="01JCTKCA896FR17K1C57NFF33H">電商詐騙</button>
+            <button class="tab-btn" data-id="01M16NND10JAG3YSS8ZDK5FKYD" data-avatar-id="pLAnKj" data-scene-id="01JCTKQZ2X3P782974Z89WBN51">電話投資詐騙</button>
+            <button class="tab-btn" data-id="01M18146XZWBNV8XJ6Z3G5A2XW" data-avatar-id="yvX5iS" data-scene-id="01JF55WXY99R0A1137NBDH4X2D">路邊推銷</button>
+            <button class="tab-btn" data-id="01M181G26DBT5X3G4R2YY9Y18K" data-avatar-id="WbXy5k" data-scene-id="01J58A46RGFK59J678AHR32R72" data-voice-id="01J7K3EKS6K74Y2XNPGYZ9N8XN">熟人多層次傳銷</button>
         </div>
     </nav>
 
@@ -551,53 +227,48 @@
         <sv-presenter></sv-presenter>
         <div id="loading-overlay">連線至 Connect API...</div>
         <div id="damage-overlay"></div>
+        <div id="victory-overlay"></div>
     </div>
 
     <!-- HUD 介面層 -->
     <div class="hud-layer">
-        <!-- 頂部血條 -->
-        <div class="game-hud glass-panel">
-            <div style="font-size: 2.2rem; color: #F472B6;"><i class="fa-solid fa-heart-pulse fa-beat"></i></div>
-            <div class="hp-section">
-                <div class="hp-label"><span>防禦理智線 (Sanity)</span> <span id="hp-text">100 / 100</span></div>
-                <div class="hp-bar-bg">
-                    <div class="hp-bar-fill" id="hp-fill"></div>
-                </div>
+        <!-- 頂部血條對決 HUD -->
+        <div class="vs-hud">
+            <!-- 玩家血條 -->
+            <div class="hp-side user-side">
+                <div class="hp-label"><span><i class="fa-solid fa-brain"></i> 防禦理智線 (您)</span> <span id="hp-user-text">100 / 100</span></div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill hp-user-fill" id="hp-user-fill"></div></div>
             </div>
-            <div style="text-align: right; min-width: 100px;">
-                <div style="font-size: 0.9rem; color: #94A3B8; margin-bottom:5px; font-weight:bold;">防詐識破積分</div>
-                <div class="score-display" id="score-text">0</div>
+            
+            <div class="vs-badge">VS</div>
+            
+            <!-- 詐騙集團血條 -->
+            <div class="hp-side ai-side">
+                <div class="hp-label"><span><span id="hp-ai-text">100 / 100</span> (騙子) 耐心值 <i class="fa-solid fa-mask"></i></span></div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill hp-ai-fill" id="hp-ai-fill"></div></div>
             </div>
         </div>
 
         <!-- 左側 HUD -->
         <div class="analyzer-panel glass-panel">
-            <div class="analyzer-header"><i class="fa-solid fa-radar fa-spin-pulse"></i> 心理戰術解析儀 HUD</div>
+            <div class="analyzer-header"><i class="fa-solid fa-radar fa-spin-pulse"></i> 心理戰術解析儀</div>
             <div class="analyzer-content scanning" id="analyzer-content">
                 <i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現新話術。
             </div>
         </div>
 
-        <!-- 右側大型對話框 -->
-        <div class="chat-panel glass-panel">
-            <div class="chat-header" id="current-mode-title">
-                <i class="fa-solid fa-crosshairs"></i> 當前模式：電商詐騙
-            </div>
+        <!-- 右側大型對話框 (無底框版) -->
+        <div class="chat-panel">
             <div class="chat-log" id="chat-log"></div>
             <form class="chat-form" id="chat-form">
-                <button type="button" id="mic-btn" class="mic-btn" title="語音輸入"><i
-                        class="fa-solid fa-microphone"></i></button>
-                <input type="text" id="chat-input" class="chat-input" placeholder="請點擊麥克風 或 鍵盤輸入對話..."
-                    autocomplete="off">
-                <button type="submit" id="chat-send-btn" class="send-btn"><i
-                        class="fa-solid fa-paper-plane"></i></button>
+                <button type="button" id="mic-btn" class="mic-btn" title="語音輸入"><i class="fa-solid fa-microphone"></i></button>
+                <input type="text" id="chat-input" class="chat-input" placeholder="對抗詐騙！請輸入您的回應..." autocomplete="off">
+                <button type="submit" id="chat-send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
             </form>
         </div>
     </div>
 
     <script type="module">
-
-        // 取得剛剛在 Studio 生成的 ID，或者透過 /api/config 取得預設 ID
         let currentChatbotId = "";
         let audioUnlocked = false;
         const history = [];
@@ -606,53 +277,67 @@
         const chatLog = document.getElementById("chat-log");
         const chatForm = document.getElementById("chat-form");
         const chatInput = document.getElementById("chat-input");
-        const chatSendBtn = document.getElementById("chat-send-btn");
         const micBtn = document.getElementById("mic-btn");
-        const modeTitle = document.getElementById("current-mode-title");
         const loading = document.getElementById("loading-overlay");
 
         // ---------------- 遊戲化狀態與控制 ----------------
         let playerHP = 100;
-        let playerScore = 0;
+        let aiHP = 100;
+        let gameOver = false;
 
         function updateGameUI() {
-            const hpFill = document.getElementById("hp-fill");
-            const hpText = document.getElementById("hp-text");
-            const scoreText = document.getElementById("score-text");
+            const hpUserFill = document.getElementById("hp-user-fill");
+            const hpUserText = document.getElementById("hp-user-text");
+            const hpAiFill = document.getElementById("hp-ai-fill");
+            const hpAiText = document.getElementById("hp-ai-text");
 
             playerHP = Math.max(0, Math.min(100, playerHP));
-            hpText.innerText = `${playerHP} / 100`;
-            hpFill.style.width = `${playerHP}%`;
+            aiHP = Math.max(0, Math.min(100, aiHP));
+            
+            hpUserText.innerText = `${playerHP} / 100`;
+            hpUserFill.style.width = `${playerHP}%`;
+            hpUserFill.className = "hp-bar-fill hp-user-fill";
+            if (playerHP <= 30) hpUserFill.classList.add("danger");
 
-            hpFill.className = "hp-bar-fill";
-            if (playerHP <= 30) hpFill.classList.add("danger");
-            else if (playerHP <= 60) hpFill.classList.add("warning");
+            hpAiText.innerText = `${aiHP} / 100`;
+            hpAiFill.style.width = `${aiHP}%`;
+            hpAiFill.className = "hp-bar-fill hp-ai-fill";
+            if (aiHP <= 30) hpAiFill.classList.add("danger");
 
-            scoreText.innerText = playerScore;
-
-            if (playerHP === 0) {
-                spawnFloatingText("💥 遭遇洗腦，防線崩潰！", "float-dmg", true);
+            if (playerHP === 0 && !gameOver) {
+                gameOver = true;
+                spawnFloatingText("💥 遭遇洗腦，防線崩潰！", "float-dmg");
                 setTimeout(() => {
-                    alert("☠️ 演練結束！\n您的理智線已歸零，成功被詐騙集團洗腦脫產！請牢記這次的教訓，重整網頁再來一次。");
+                    alert("☠️ 演練結束！
+您的理智線已歸零，成功被詐騙集團洗腦脫產！請牢記這次的教訓，重整網頁再來一次。");
+                }, 1500);
+            } else if (aiHP === 0 && !gameOver) {
+                gameOver = true;
+                const phone = document.getElementById("main-avatar-layer");
+                phone.classList.add("shake-active", "victory-flash");
+                spawnFloatingText("🛡️ 成功識破詐騙！", "float-dmg-ai");
+                setTimeout(() => {
+                    alert("🎉 恭喜！
+您成功耗盡了詐騙集團的耐心，識破了騙局！防禦大腦免疫力升級！");
                 }, 1500);
             }
         }
 
-        function spawnFloatingText(text, styleClass, isCenter = false) {
+        function spawnFloatingText(text, styleClass) {
             const el = document.createElement("div");
             el.className = `floating-text ${styleClass}`;
             el.innerHTML = text;
 
-            // All text centered in fullscreen HUD
-            el.style.left = `calc(50% + ${Math.random() * 60 - 30}px)`;
-            el.style.top = `calc(50% + ${Math.random() * 60 - 30}px)`;
-
+            // All text centered in fullscreen HUD with random offset
+            el.style.left = `calc(50% + ${Math.random() * 80 - 40}px)`;
+            el.style.top = `calc(50% + ${Math.random() * 80 - 40}px)`;
+            
             document.body.appendChild(el);
             setTimeout(() => el.remove(), 2500);
         }
 
         function takeDamage(amount) {
-            if (playerHP <= 0) return;
+            if (playerHP <= 0 || gameOver) return;
             playerHP -= amount;
             const phone = document.getElementById("main-avatar-layer");
             phone.classList.add("shake-active", "damage-flash");
@@ -661,109 +346,24 @@
             updateGameUI();
         }
 
-        function gainScore(amount) {
-            if (playerHP <= 0) return;
-            playerScore += amount;
-            spawnFloatingText(`+${amount} 識破分數`, "float-score");
+        function takeDamageAI(amount) {
+            if (aiHP <= 0 || gameOver) return;
+            aiHP -= amount;
+            spawnFloatingText(`-${amount} 騙子耐心降低`, "float-dmg-ai");
             updateGameUI();
         }
 
         function healHP(amount) {
-            if (playerHP >= 100 || playerHP <= 0) return;
+            if (playerHP >= 100 || gameOver) return;
             playerHP += amount;
-            spawnFloatingText(`+${amount} 理智恢復`, "float-heal");
+            spawnFloatingText(`+${amount} 恢復理智`, "float-heal");
             updateGameUI();
         }
 
-        // 語音辨識 (Web Speech API) 邏輯
-        let recognition = null;
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'zh-TW';
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
-
-            recognition.onstart = function () {
-                micBtn.classList.add('recording');
-                chatInput.placeholder = "正在聆聽... (請說話)";
-            };
-
-            recognition.onresult = function (event) {
-                const speechResult = event.results[0][0].transcript;
-                chatInput.value = speechResult;
-                // 自動發送
-                chatSendBtn.click();
-            };
-
-            recognition.onerror = function (event) {
-                console.error("語音辨識錯誤:", event.error);
-                micBtn.classList.remove('recording');
-                chatInput.placeholder = "請輸入對話 或 點擊麥克風說話...";
-            };
-
-            recognition.onend = function () {
-                micBtn.classList.remove('recording');
-                chatInput.placeholder = "請輸入對話 或 點擊麥克風說話...";
-            };
-
-            micBtn.addEventListener('click', () => {
-                if (micBtn.classList.contains('recording')) {
-                    recognition.stop();
-                } else {
-                    recognition.start();
-                }
-            });
-        } else {
-            micBtn.style.display = 'none'; // 瀏覽器不支援時隱藏
-            console.warn("此瀏覽器不支援語音辨識。");
-        }
-
-        // 切換頁籤邏輯
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                // 重置 UI
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-
-                modeTitle.textContent = `當前模式：${e.target.textContent}`;
-
-                // 取得按鈕上綁定的 Chatbot ID，如果沒有填，就用預設的
-                const newId = e.target.getAttribute('data-id');
-                if (newId) currentChatbotId = newId;
-
-                // 切換 Avatar 與背景
-                const avatarId = e.target.getAttribute('data-avatar-id');
-                const sceneId = e.target.getAttribute('data-scene-id');
-                const voiceId = e.target.getAttribute('data-voice-id');
-
-                if (avatarId && sceneId) {
-                    try {
-                        loading.style.display = "flex";
-                        loading.textContent = "切換時空與角色中...";
-                        const { connect_key } = await request("/api/connect-key");
-                        await presenter.initializeWithConnectKey(connect_key, {
-                            avatarId: avatarId,
-                            sceneId: sceneId,
-                            voiceId: voiceId
-                        });
-                    } catch (err) {
-                        console.error("模型切換失敗", err);
-                        loading.style.display = "none";
-                    }
-                }
-
-                // 清空對話框
-                chatLog.innerHTML = "";
-                history.length = 0;
-                appendMessage("assistant", `已切換至【${e.target.textContent}】情境，請開始對話。`);
-            });
-        });
-
         function appendMessage(role, text) {
             const el = document.createElement("div");
-            el.className = `msg msg--${role}`;
-            el.textContent = text;
+            el.className = `chat-message ${role}`;
+            el.innerText = text;
             chatLog.appendChild(el);
             chatLog.scrollTop = chatLog.scrollHeight;
         }
@@ -775,17 +375,51 @@
                 body: JSON.stringify(body)
             });
             const data = await res.json().catch(() => ({}));
-            if (!res.ok) {
-                throw new Error(data.details ?? data.error ?? res.statusText);
-            }
+            if (!res.ok) throw new Error(data.details ?? data.error ?? res.statusText);
             return data;
         }
 
-        // 啟動與連線機制 (模仿官方 Embed)
+        // 綁定所有 Tab 按鈕 (切換情境模式與角色)
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                const target = e.target;
+                target.classList.add('active');
+
+                const newId = target.getAttribute('data-id');
+                const avatarId = target.getAttribute('data-avatar-id');
+                const sceneId = target.getAttribute('data-scene-id');
+                const voiceId = target.getAttribute('data-voice-id');
+
+                currentChatbotId = newId;
+
+                // 重置遊戲狀態
+                playerHP = 100; aiHP = 100; gameOver = false; 
+                chatLog.innerHTML = ""; history.length = 0;
+                updateGameUI();
+                
+                loading.style.display = "flex";
+                loading.innerText = "切換情境中...";
+                
+                try {
+                    const { connect_key } = await request("/api/connect-key");
+                    const overrides = {};
+                    if(avatarId) overrides.avatarId = avatarId;
+                    if(sceneId) overrides.sceneId = sceneId;
+                    if(voiceId) overrides.voiceId = voiceId;
+                    
+                    await presenter.initializeWithConnectKey(connect_key, overrides);
+                } catch (err) {
+                    console.error("切換角色失敗:", err);
+                    loading.innerText = "切換失敗，請重試。";
+                }
+            });
+        });
+
+        // 啟動與連線機制
         async function start() {
             try {
                 const cfg = await request("/api/config");
-                // 初始化載入引擎
                 await new Promise((resolve) => {
                     const script = document.createElement("script");
                     script.type = "module";
@@ -794,20 +428,30 @@
                     document.head.append(script);
                 });
 
-                // 監聽 Ready 事件
                 presenter.addEventListener("PRESENTER_STATUS", (e) => {
                     if (e.detail?.status === "Ready") {
                         loading.style.display = "none";
-                        appendMessage("assistant", "系統連線成功，請開始您的防詐測試。");
+                        if (history.length === 0) {
+                            appendMessage("assistant", "系統連線成功，請開始您的防詐測試。");
+                        }
                     }
                 });
 
                 const { connect_key } = await request("/api/connect-key");
-                await presenter.initializeWithConnectKey(connect_key, cfg.fixedTarget);
-
-                // 預設抓系統的 chatbotId (如果按鈕沒綁定的話作為備案)
-                currentChatbotId = cfg.chatbotId;
-
+                const defaultBtn = document.querySelector('.tab-btn.active');
+                currentChatbotId = defaultBtn ? defaultBtn.getAttribute('data-id') : cfg.chatbotId;
+                
+                const overrides = {};
+                if(defaultBtn) {
+                    const avatarId = defaultBtn.getAttribute('data-avatar-id');
+                    const sceneId = defaultBtn.getAttribute('data-scene-id');
+                    const voiceId = defaultBtn.getAttribute('data-voice-id');
+                    if(avatarId) overrides.avatarId = avatarId;
+                    if(sceneId) overrides.sceneId = sceneId;
+                    if(voiceId) overrides.voiceId = voiceId;
+                }
+                
+                await presenter.initializeWithConnectKey(connect_key, overrides);
             } catch (err) {
                 console.error(err);
                 loading.textContent = "連線失敗：" + (err.message || "未知錯誤");
@@ -815,18 +459,54 @@
         }
         start();
 
+        // 語音輸入機制 (Web Speech API)
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'zh-TW';
+            recognition.interimResults = false;
+            let isRecording = false;
+
+            micBtn.addEventListener("click", () => {
+                if (isRecording) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                    micBtn.classList.add("recording");
+                    isRecording = true;
+                }
+            });
+
+            recognition.addEventListener("result", (e) => {
+                const transcript = e.results[0][0].transcript;
+                chatInput.value += transcript;
+            });
+            recognition.addEventListener("end", () => {
+                micBtn.classList.remove("recording");
+                isRecording = false;
+            });
+            recognition.addEventListener("error", (e) => {
+                console.error("語音辨識錯誤:", e);
+                micBtn.classList.remove("recording");
+                isRecording = false;
+            });
+        } else {
+            micBtn.style.display = 'none';
+        }
+
         // 發送聊天訊息
         chatForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const text = chatInput.value.trim();
-            if (!text || !currentChatbotId) return;
+            if (!text || !currentChatbotId || gameOver) return;
 
             chatInput.value = "";
             appendMessage("user", text);
             history.push({ role: "user", text });
 
-            // 每次玩家主動回應，恢復微量理智
-            if (text.length > 2) healHP(5);
+            // 玩家主動回應時，合理扣減敵方耐心值 (根據句子長度和亂數)
+            const damageToAI = Math.floor(Math.random() * 10) + (text.length > 5 ? 10 : 5);
+            takeDamageAI(damageToAI);
 
             presenter.setThinking?.(true);
 
@@ -836,7 +516,6 @@
             }
 
             try {
-                // 打後端 API 發訊息給選定的 Chatbot
                 const data = await request(`/api/chatbots/${currentChatbotId}/chat`, {
                     messages: history.map(h => ({ role: h.role, parts: [{ type: "text", text: h.text }] }))
                 });
@@ -845,11 +524,9 @@
                     appendMessage("assistant", data.reply_text);
                     history.push({ role: "assistant", text: data.reply_text });
                     presenter.setThinking?.(false);
-
-                    // 送去給 3D 人演出 (交回給 Perxona 官方的語意動作 AI 判斷)
                     await presenter.present(data.reply_text);
 
-                    // 觸發即時戰術解析 (第一句話/開場白不發動攻擊)
+                    // 觸發戰術解析 (開頭幾句不痛下殺手)
                     analyzeTactic(data.reply_text, history.length > 2);
                 }
             } catch (err) {
@@ -864,87 +541,35 @@
             if (!text) return;
 
             let tactics = [];
-
-            // 輔助函式：隨機抽取陣列元素
             const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-            // 1. 假同理心 / 降低防備
-            const match1 = text.match(/(別急|不要緊張|我來幫|放心|別擔心|保證|我教你|協助您|不急|處理一下|很快就好)/);
-            if (match1) {
-                const msgs = [
-                    `對方使用「${match1[0]}」試圖安撫您的防備心，這是經典的『好人』話術！`,
-                    `注意！他在用「${match1[0]}」拉近信任關係，實則要讓您在放鬆戒備時聽從指示。`,
-                    `刻意展現同理心：「${match1[0]}」。這是在進行心理學的服從性測試，請保持警戒！`
-                ];
-                tactics.push({ level: "warning", html: `<strong>🎭【假同理心/卸除防備】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
-            }
+            // 各種戰術判定 (簡化為Regex)
+            const match1 = text.match(/(別急|不要緊張|我來幫|放心|別擔心|保證|協助您|很快就好)/);
+            if (match1) tactics.push({ level: "warning", html: `<strong>🎭【假同理心/卸除防備】</strong><br><span style="color:#64748B;">「${match1[0]}」試圖安撫您的防備心，經典的『好人』話術！</span>` });
 
-            // 2. 指示操作 / 系統設定
-            const match2 = text.match(/(網銀|APP|分期|入帳|轉帳|匯款|操作|提款機|ATM|身分證|預扣款|解除設定|批發商|中信|郵局)/i);
-            if (match2) {
-                const msgs = [
-                    `危險！對方提到「${match2[0]}」，意圖將您引導至看不見實體的金融介面進行操控。`,
-                    `典型的操作話術！聽到「${match2[0]}」請立刻中斷對話，正規官方不會透過電話指導設定。`,
-                    `一旦對方以「${match2[0]}」為藉口要求操作，99.9%是騙你把錢轉出去的陷阱！`
-                ];
-                tactics.push({ level: "danger", html: `<strong>📲【遠端盲目操控】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
-            }
+            const match2 = text.match(/(限時|最後|馬上|快點|錯過|名額有限|截止)/);
+            if (match2) tactics.push({ level: "danger", html: `<strong>⏳【時間壓力/恐懼錯失】</strong><br><span style="color:#64748B;">使用「${match2[0]}」製造急迫感，逼迫您放棄思考直接答應。</span>` });
 
-            // 3. 權威與恐懼
-            const match3 = text.match(/(違法|凍結|報警|法院|查封|檢察官|洗錢|盜用|筆錄|警局|嚴重|責任|吃上官司)/);
-            if (match3) {
-                const msgs = [
-                    `🚨 警報：對方拋出「${match3[0]}」威脅，意圖癱瘓您的理智，激發恐懼反應！`,
-                    `假冒公權力！用「${match3[0]}」壓迫是為了製造恐慌，真正的警察不會打電話要你匯錢。`,
-                    `高壓強迫手段！聽到「${match3[0]}」，這是典型的黑臉戰術，千萬別被情緒綁架。`
-                ];
-                tactics.push({ level: "danger", html: `<strong>🚨【權威與恐懼威脅】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
-            }
+            const match3 = text.match(/(先匯|轉帳|保證金|手續費|驗證身分|解除分期|提供帳號)/);
+            if (match3) tactics.push({ level: "danger", html: `<strong>🚨【核心詐騙指令/金流要求】</strong><br><span style="color:#64748B;">極度危險！對方提到「${match3[0]}」，這是所有詐騙的最終目的。</span>` });
 
-            // 4. 限時焦慮
-            const match4 = text.match(/(今晚|12點|馬上|立刻|最後|倒數|來不及|趕快|半夜|逾期|下班前)/);
-            if (match4) {
-                const msgs = [
-                    `⏰ 倒計時陷阱：刻意加上「${match4[0]}」，讓你沒有時間上網查證或詢問親友！`,
-                    `焦慮放大器！對方用「${match4[0]}」製造急迫感，越急越容易出錯，請深呼吸暫停動作。`,
-                    `『時限』是他們最好的武器！強加「${match4[0]}」的壓力，目的就是逼您立刻匯款。`
-                ];
-                tactics.push({ level: "danger", html: `<strong>⏰【限時焦慮壓迫】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
-            }
+            const match4 = text.match(/(經理|警察|主任|教授|法院|銀行客服)/);
+            if (match4) tactics.push({ level: "warning", html: `<strong>👮【權威借用/身分偽裝】</strong><br><span style="color:#64748B;">偽裝成「${match4[0]}」等權威角色，利用服從權威的心理施壓。</span>` });
 
-            // 5. 暴利誘惑
-            const match5 = text.match(/(內線|保證賺|翻倍|穩賺|機會|秘密|老師|報牌|帶單|獲利|解套|財富自由)/);
-            if (match5) {
-                const msgs = [
-                    `高報酬蜜糖：對方利用「${match5[0]}」勾起貪婪，這是標準的殺豬盤養套殺起手式。`,
-                    `天上掉下來的常常是陷阱！「${match5[0]}」的話術是為了讓您喪失風險意識。`,
-                    `投資群組最愛用「${match5[0]}」畫大餅戰術，誘使你投入本金，千萬把持住理智！`
-                ];
-                tactics.push({ level: "warning", html: `<strong>💰【FOMO 貪婪誘惑】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
-            }
+            const match5 = text.match(/(保證獲利|高報酬|穩賺|被動收入|內部消息|財富自由)/);
+            if (match5) tactics.push({ level: "danger", html: `<strong>💰【FOMO 貪婪誘惑】</strong><br><span style="color:#64748B;">投資群組最愛用「${match5[0]}」，畫大餅誘使你投入本金！</span>` });
 
-            // 6. 情感勒索/PUA
-            const match6 = text.match(/(死薪水|填個問卷|當作幫忙|拜託|同學|差一組|領死薪水|沒出息|上進心|年輕人|挺一下)/);
-            if (match6) {
-                const msgs = [
-                    `情緒施壓！對方用「${match6[0]}」進行人脈綁架，讓你覺得不配合就是你的錯。`,
-                    `貶低自尊戰術：以「${match6[0]}」為切入點，摧毀自信，讓你盲目聽從大師指示。`,
-                    `他在對你 PUA！說出「${match6[0]}」是利用罪惡感或人情壓力逼迫你點頭。`
-                ];
-                tactics.push({ level: "warning", html: `<strong>😈【PUA 情緒勒索】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
-            }
+            const match6 = text.match(/(拜託|幫忙|年輕人|上進心|差一組|領死薪水)/);
+            if (match6) tactics.push({ level: "warning", html: `<strong>😈【PUA 情緒勒索】</strong><br><span style="color:#64748B;">情緒綁架！對方用「${match6[0]}」讓你覺得不配合就是你的錯。</span>` });
 
             if (tactics.length > 0) {
                 const highestLevel = tactics.some(t => t.level === "danger") ? "danger" : "warning";
 
-                // --- 遊戲化效果觸發 ---
                 if (applyGameplay) {
                     if (highestLevel === "danger") {
-                        takeDamage(15);
-                        gainScore(30);
+                        takeDamage(Math.floor(Math.random() * 10) + 15); // 扣 15~24
                     } else {
-                        takeDamage(10);
-                        gainScore(15);
+                        takeDamage(Math.floor(Math.random() * 5) + 10);  // 扣 10~14
                     }
                 }
 
@@ -955,25 +580,15 @@
                 analyzer.className = `analyzer-content alert-${highestLevel}`;
                 analyzer.innerHTML = `<i class="fa-solid ${icon}" style="font-size:1.5rem; margin-right:12px; margin-top:5px; height:max-content;"></i>
                                       <div style="flex:1;"><strong>🎯 本句蘊含戰術破解：</strong><br><div style="margin-top:6px;">${displayTactics}</div></div>`;
-
+                
                 setTimeout(() => {
-                    analyzer.className = "analyzer-content scanning";
-                    analyzer.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現新話術。`;
-                }, 15000);
+                    if(!gameOver) {
+                        analyzer.className = "analyzer-content scanning";
+                        analyzer.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現新話術。`;
+                    }
+                }, 10000);
             }
         }
-
-        // ---------------- 假視訊通話計時器 ----------------
-        let callSeconds = 0;
-        setInterval(() => {
-            callSeconds++;
-            const m = String(Math.floor(callSeconds / 60)).padStart(2, '0');
-            const s = String(callSeconds % 60).padStart(2, '0');
-            const callStatus = document.getElementById("call-status");
-            if (callStatus) callStatus.innerText = `正在通話中 ${m}:${s}`;
-        }, 1000);
-
     </script>
 </body>
-
 </html>
