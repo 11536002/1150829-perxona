@@ -727,35 +727,54 @@
             }
         });
 
-        // ---------------- 話術解析邏輯 ----------------
+        // ---------------- 話術解析邏輯 (極致強化版) ----------------
         function analyzeTactic(text) {
             const analyzer = document.getElementById("analyzer-content");
-            let tactic = null;
-            let level = "warning";
+            if (!text) return;
 
-            if (/(扣款|凍結|報警|法院|查封|檢察官|違法|盜用|銀行)/.test(text)) {
-                tactic = "🚨【權威與恐懼威脅】對方利用公權力或系統錯誤，極大化你的杏仁核恐懼，迫使你放棄思考。";
-                level = "danger";
-            } else if (/(時間|今晚|馬上|立刻|最後|倒數|來不及)/.test(text)) {
-                tactic = "⏰【限時焦慮壓迫】對方不給你查證的時間，故意製造限時壓力，逼迫立刻進行交易或匯款。";
-                level = "danger";
-            } else if (/(內線|保證賺|翻倍|賺錢|投資|穩賺|機會|秘密)/.test(text)) {
-                tactic = "💰【FOMO 貪婪誘惑】利用『錯失恐懼症』，描繪虛假的高報酬藍圖，讓你主動掏出積蓄。";
-                level = "warning";
-            } else if (/(死薪水|沒用|廢物|笨|幫我|可憐|拜託|同學|老朋友|人生)/.test(text)) {
-                tactic = "😈【PUA 自尊打擊 / 情感勒索】利用人際關係壓力或貶低你的社會價值，讓你為了證明自己或出於同情而妥協。";
-                level = "warning";
+            let tactics = [];
+
+            // 1. 假同理心 / 降低防備
+            if (/(別急|不要緊張|我來幫|放心|別擔心|保證|我教你|協助您|不急)/.test(text)) {
+                tactics.push({ level: "warning", html: "🎭【假同理心/卸除防備】對方刻意安撫情緒（如：您別急），扮演『好人』角色，藉以建立虛假信任感！" });
+            }
+            // 2. 指示操作 / 系統設定
+            if (/(網銀|APP|分期|入帳|轉帳|匯款|操作|提款機|ATM|身分證|預扣款|解除設定|批發商)/i.test(text)) {
+                tactics.push({ level: "danger", html: "📲【遠端盲目操控】對方要求您打開網銀或操作APP，這是典型的『解除分期付款/系統錯誤』詐騙起手式！" });
+            }
+            // 3. 權威與恐懼
+            if (/(違法|凍結|報警|法院|查封|檢察官|洗錢|盜用|筆錄|警局|嚴重|責任)/.test(text)) {
+                tactics.push({ level: "danger", html: "🚨【權威與恐懼威脅】對方利用公權力或嚴重後果，極大化你的杏仁核恐懼，迫使你放棄思考。" });
+            }
+            // 4. 限時焦慮
+            if (/(今晚|12點|馬上|立刻|最後|倒數|來不及|趕快|半夜|逾期)/.test(text)) {
+                tactics.push({ level: "danger", html: "⏰【限時焦慮壓迫】故意製造限時壓力（如：今晚12點），不給你查證的時間，逼迫立刻交易。" });
+            }
+            // 5. 暴利誘惑
+            if (/(內線|保證賺|翻倍|穩賺|機會|秘密|老師|報牌|帶單|獲利|解套)/.test(text)) {
+                tactics.push({ level: "warning", html: "💰【FOMO 貪婪誘惑】描繪虛假的『保證獲利』藍圖，挑起你的錯失恐懼症，讓你主動掏出積蓄。" });
+            }
+            // 6. 情感勒索/PUA
+            if (/(死薪水|填個問卷|當作幫忙|拜託|同學|差一組|領死薪水|沒出息|上進心|年輕人)/.test(text)) {
+                tactics.push({ level: "warning", html: "😈【PUA 情緒勒索】利用人際社會壓力、貶低你的價值或是乞求同情，讓你覺得『不好意思拒絕』而妥協。" });
             }
 
-            if (tactic) {
-                analyzer.className = `analyzer-content alert-${level}`;
-                analyzer.innerHTML = `<i class="fa-solid fa-triangle-exclamation fa-beat"></i> <div><strong>破解戰術：</strong><br>${tactic}</div>`;
+            if (tactics.length > 0) {
+                // 取出所有觸發的戰術組成列表 (最多顯示前2個避免畫面過長)
+                const displayTactics = tactics.slice(0, 2).map(t => `<div>${t.html}</div>`).join('<hr style="border-color:rgba(0,0,0,0.05); margin:8px 0;">');
 
-                // 10秒後回到掃描狀態
+                const highestLevel = tactics.some(t => t.level === "danger") ? "danger" : "warning";
+                const icon = highestLevel === "danger" ? "fa-triangle-exclamation fa-beat" : "fa-lightbulb fa-shake";
+
+                analyzer.className = `analyzer-content alert-${highestLevel}`;
+                analyzer.innerHTML = `<i class="fa-solid ${icon}" style="font-size:1.5rem; margin-right:10px;"></i>
+                                      <div style="flex:1;"><strong>🎯 破解敵方戰術：</strong><br>${displayTactics}</div>`;
+
+                // 延長顯示時間為 15 秒，確保長對話時不會太快消失
                 setTimeout(() => {
                     analyzer.className = "analyzer-content scanning";
                     analyzer.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現話術。`;
-                }, 10000);
+                }, 15000);
             }
         }
 
