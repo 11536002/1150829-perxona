@@ -137,6 +137,8 @@
             width: 100%;
             margin: 0 auto;
             align-items: stretch;
+            min-height: 0;
+            /* 防止超出視窗，讓內部滾動生效 */
         }
 
         /* 視訊手機框 */
@@ -244,6 +246,8 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            min-height: 0;
+            /* 強制不撐破外框 */
         }
 
         /* 心理戰術解析儀 */
@@ -307,6 +311,8 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
             overflow: hidden;
+            min-height: 0;
+            /* 讓 chat-log 能夠正常滾動 */
         }
 
         .chat-header {
