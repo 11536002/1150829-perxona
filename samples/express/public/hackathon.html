@@ -559,13 +559,13 @@
         </a>
         <div class="controls">
             <button class="tab-btn active" data-id="01M15VG6NTAY7TR8BD8EWQNJG7"
-                data-avatar-id="01KVQ59VW18PC6P2HQET51NMYS" data-scene-id="01KWVBXE9Q9CZ9FENATQHZYXJV"
+                data-avatar-id="01K4M8SH17VHBRTXWEB2KKYPCS" data-scene-id="01KWVBXE9Q9CZ9FENATQHZYXJV"
                 data-voice-id="01M146V9SE0AE5Q2AAECVKW60T">電商詐騙</button>
-            <button class="tab-btn" data-id="01M15VH86B8N19MKC71SD6X8Y4" data-avatar-id="01KVQ595FX6K4SJ182HRNFERTK"
+            <button class="tab-btn" data-id="01M15VH86B8N19MKC71SD6X8Y4" data-avatar-id="01K4M8R1PK54ATSP7ZWSX475B9"
                 data-scene-id="01KWVBVQBZ5FV2BYKDTQ40V9AF" data-voice-id="01M146V9S6HYQ83TYYPNRFA1NY">電話投資詐騙</button>
-            <button class="tab-btn" data-id="01M15VKVVYENG4HFDH48Q712D9" data-avatar-id="01KVQ57MAC3HT5GWZH5C2J7NZ9"
+            <button class="tab-btn" data-id="01M15VKVVYENG4HFDH48Q712D9" data-avatar-id="01K4M8T4RF9HTYE1W0M0957VSJ"
                 data-scene-id="01KQEJD0NJFVM20M588K7D1E9Z" data-voice-id="01M146V9S6HYQ83TYYPNRFA1NX">路邊推銷</button>
-            <button class="tab-btn" data-id="01M15VMYRFZKAZPKH7NZT2BKN5" data-avatar-id="01KVQ54ZTBZVCTDXXRWQF0C6RS"
+            <button class="tab-btn" data-id="01M15VMYRFZKAZPKH7NZT2BKN5" data-avatar-id="01K4M8TKBRTP4R1Z8TFGB5MYZN"
                 data-scene-id="01KQEJCMFDVZDHYE3RVV2XHPK3" data-voice-id="01M146V9S5WKCV14NR0WQR85E2">熟人多層次傳銷</button>
         </div>
     </nav>
@@ -859,7 +859,11 @@
             history.push({ role: "user", text });
 
             // 玩家主動回應時，合理扣減敵方耐心值 (根據句子長度和亂數)
-            const damageToAI = Math.floor(Math.random() * 10) + (text.length > 5 ? 10 : 5);
+            let damageToAI = Math.floor(Math.random() * 10) + (text.length > 5 ? 10 : 5);
+            if (/(詐騙|騙人|騙子|報警|警察|165|不信|假|告你)/.test(text)) {
+                damageToAI += 30; // 玩家直接點破，爆擊！
+                spawnFloatingText("⚔️ 識破攻擊！爆擊！", "float-heal");
+            }
             takeDamageAI(damageToAI);
 
             presenter.setThinking?.(true);
