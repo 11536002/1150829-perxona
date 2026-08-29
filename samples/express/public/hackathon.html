@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>騙騙不信 | 沉浸式防詐對戰</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
             --primary: #F43F5E;
@@ -21,176 +21,508 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             width: 100vw;
             height: 100vh;
             background-color: var(--bg-color);
             color: #F8FAFC;
-            overflow: hidden; /* 全螢幕無滾動 */
+            overflow: hidden;
+            /* 全螢幕無滾動 */
         }
 
         /* 導覽列 (Top Navbar) */
         nav {
             position: absolute;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 40px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
             z-index: 50;
         }
+
         .logo {
-            font-size: 1.4rem; font-weight: 900; color: white; display: flex; align-items: center; text-decoration: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: white;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
-        .controls { display: flex; gap: 12px; }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+        }
+
         .tab-btn {
-            background: rgba(255, 255, 255, 0.1); color: #CBD5E1; border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.3s;
-            backdrop-filter: blur(4px); letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #CBD5E1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            backdrop-filter: blur(4px);
+            letter-spacing: 1px;
         }
-        .tab-btn:hover { background: rgba(255, 255, 255, 0.2); color: white; transform: translateY(-2px); }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0 15px rgba(244, 63, 94, 0.6); }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.6);
+        }
 
         /* 全螢幕 Avatar (底層) */
         .avatar-layer {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
             background: radial-gradient(circle at center, #1E293B 0%, #0F172A 100%);
         }
+
         sv-presenter {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+
         /* 連線遮罩 */
         #loading-overlay {
-            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 2rem; font-weight: bold; color: white; z-index: 10;
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            z-index: 10;
         }
+
         /* 受擊紅光 */
         #damage-overlay {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle, transparent 30%, rgba(239,68,68,0.7) 120%);
-            opacity: 0; pointer-events: none; z-index: 20; transition: opacity 0.3s;
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, transparent 30%, rgba(239, 68, 68, 0.7) 120%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+            transition: opacity 0.3s;
         }
-        .damage-flash #damage-overlay { opacity: 1; transition: opacity 0.1s; }
+
+        .damage-flash #damage-overlay {
+            opacity: 1;
+            transition: opacity 0.1s;
+        }
 
         /* HUD 層 (遊戲化介面) */
         .hud-layer {
-            position: absolute; inset: 0; top: 70px; pointer-events: none; z-index: 30;
-            display: flex; flex-direction: column; overflow: hidden; padding: 20px;
+            position: absolute;
+            inset: 0;
+            top: 70px;
+            pointer-events: none;
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 20px;
         }
+
         .glass-panel {
             background: var(--panel-bg);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            pointer-events: auto; /* 允許點擊 */
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            pointer-events: auto;
+            /* 允許點擊 */
         }
 
         /* 頂部血條面板 */
         .game-hud {
-            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-            width: 650px; padding: 12px 25px; display: flex; align-items: center; justify-content: space-between;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 650px;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .hp-section { flex: 1; margin: 0 20px; display: flex; flex-direction: column; justify-content: center; }
-        .hp-label { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 6px; font-size: 1.05rem; color: #E2E8F0; text-shadow: 0 1px 2px #000; }
-        .hp-bar-bg { background: rgba(0,0,0,0.6); height: 20px; border-radius: 10px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.15); box-shadow: inset 0 2px 5px rgba(0,0,0,0.6); }
-        .hp-bar-fill { 
-            background: linear-gradient(90deg, #10B981, #34D399); 
-            height: 100%; width: 100%;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s; 
-            box-shadow: inset 0 2px 5px rgba(255,255,255,0.4);
+
+        .hp-section {
+            flex: 1;
+            margin: 0 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
-        .hp-bar-fill.warning { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
-        .hp-bar-fill.danger { background: linear-gradient(90deg, #EF4444, #F87171); animation: pulse-danger 1s infinite alternate; }
-        .score-display { font-size: 2rem; font-weight: 900; color: #FBBF24; text-shadow: 0 0 15px rgba(251, 191, 36, 0.8); line-height: 1; margin-top:4px; }
+
+        .hp-label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 1.05rem;
+            color: #E2E8F0;
+            text-shadow: 0 1px 2px #000;
+        }
+
+        .hp-bar-bg {
+            background: rgba(0, 0, 0, 0.6);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        .hp-bar-fill {
+            background: linear-gradient(90deg, #10B981, #34D399);
+            height: 100%;
+            width: 100%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
+            box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.4);
+        }
+
+        .hp-bar-fill.warning {
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+        }
+
+        .hp-bar-fill.danger {
+            background: linear-gradient(90deg, #EF4444, #F87171);
+            animation: pulse-danger 1s infinite alternate;
+        }
+
+        .score-display {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FBBF24;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.8);
+            line-height: 1;
+            margin-top: 4px;
+        }
 
         /* 左側解析儀 */
         .analyzer-panel {
-            position: absolute; top: 120px; left: 40px; width: 420px; max-height: calc(100vh - 180px);
-            padding: 22px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;
+            position: absolute;
+            top: 120px;
+            left: 40px;
+            width: 420px;
+            max-height: calc(100vh - 180px);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
         }
-        .analyzer-panel::-webkit-scrollbar { display: none; }
-        .analyzer-header { font-weight: 900; font-size: 1.25rem; color: #38BDF8; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
-        .analyzer-content { background: rgba(0,0,0,0.4); padding: 18px; border-radius: 12px; font-size: 1.1rem; line-height: 1.5; color: #94A3B8; display: flex; align-items: flex-start; transition: 0.3s; border-left: 5px solid transparent; }
-        .analyzer-content.scanning { color: #38BDF8; border-color: #38BDF8; animation: pulse 2s infinite; }
-        .analyzer-content.alert-warning { background: rgba(245, 158, 11, 0.15); border-color: #F59E0B; color: #FDE68A; }
-        .analyzer-content.alert-danger { background: rgba(239, 68, 68, 0.15); border-color: #EF4444; color: #FECACA; }
+
+        .analyzer-panel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .analyzer-header {
+            font-weight: 900;
+            font-size: 1.25rem;
+            color: #38BDF8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .analyzer-content {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #94A3B8;
+            display: flex;
+            align-items: flex-start;
+            transition: 0.3s;
+            border-left: 5px solid transparent;
+        }
+
+        .analyzer-content.scanning {
+            color: #38BDF8;
+            border-color: #38BDF8;
+            animation: pulse 2s infinite;
+        }
+
+        .analyzer-content.alert-warning {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: #F59E0B;
+            color: #FDE68A;
+        }
+
+        .analyzer-content.alert-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #EF4444;
+            color: #FECACA;
+        }
 
         /* 右側巨型對話框 */
         .chat-panel {
-            position: absolute; bottom: 40px; right: 40px; width: 550px; height: calc(100vh - 180px);
-            display: flex; flex-direction: column; overflow: hidden;
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 550px;
+            height: calc(100vh - 180px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
+
         .chat-header {
-            padding: 15px 25px; border-bottom: 1px solid var(--border-color); font-weight: bold; font-size: 1.2rem;
-            color: #F8FAFC; background: rgba(0,0,0,0.3); display: flex; align-items: center; gap: 12px;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #F8FAFC;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
+
         .chat-log {
-            flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth;
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
         }
-        .chat-log::-webkit-scrollbar { width: 6px; }
-        .chat-log::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+        .chat-log::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-log::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
         .chat-message {
-            max-width: 85%; padding: 15px 20px; border-radius: 20px; font-size: 1.15rem; line-height: 1.5;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25); word-wrap: break-word; position: relative;
+            max-width: 85%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 1.15rem;
+            line-height: 1.5;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            word-wrap: break-word;
+            position: relative;
         }
+
         .chat-message.user {
-            align-self: flex-end; background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: white; border-bottom-right-radius: 4px;
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border-bottom-right-radius: 4px;
         }
+
         .chat-message.assistant {
-            align-self: flex-start; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.1);
-            color: white; border-bottom-left-radius: 4px; backdrop-filter: blur(10px);
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-bottom-left-radius: 4px;
+            backdrop-filter: blur(10px);
         }
+
         .chat-form {
-            display: flex; padding: 18px 25px; gap: 15px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border-color);
+            display: flex;
+            padding: 18px 25px;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid var(--border-color);
         }
+
         .chat-input {
-            flex: 1; padding: 15px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.1); color: white; font-size: 1.15rem; outline: none; transition: 0.3s;
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.15rem;
+            outline: none;
+            transition: 0.3s;
         }
-        .chat-input:focus { border-color: var(--primary); background: rgba(255,255,255,0.15); }
-        .chat-input::placeholder { color: #CBD5E1; }
-        .mic-btn, .send-btn {
-            width: 55px; height: 55px; border-radius: 12px; border: none; cursor: pointer; display: flex;
-            justify-content: center; align-items: center; font-size: 1.4rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.15);
         }
-        .mic-btn { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
-        .mic-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
-        .mic-btn.recording { background: #EF4444; color: white; animation: pulse 1.5s infinite; border-color: #EF4444; }
-        .send-btn { background: var(--primary); color: white; }
-        .send-btn:hover { background: var(--primary-hover); transform: scale(1.05); }
+
+        .chat-input::placeholder {
+            color: #CBD5E1;
+        }
+
+        .mic-btn,
+        .send-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .mic-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .mic-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .mic-btn.recording {
+            background: #EF4444;
+            color: white;
+            animation: pulse 1.5s infinite;
+            border-color: #EF4444;
+        }
+
+        .send-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .send-btn:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+        }
 
         /* 動畫 */
-        @keyframes pulse-danger { from { opacity: 1; } to { opacity: 0.7; } }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-        
-        @keyframes popUpFade {
-            0% { transform: translate(-50%, -50%) translateY(20px) scale(0.5); opacity: 0; }
-            10% { transform: translate(-50%, -50%) translateY(-10px) scale(1.1); opacity: 1; }
-            80% { transform: translate(-50%, -50%) translateY(-40px) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) translateY(-80px) scale(1.05); opacity: 0; }
+        @keyframes pulse-danger {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0.7;
+            }
         }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes popUpFade {
+            0% {
+                transform: translate(-50%, -50%) translateY(20px) scale(0.5);
+                opacity: 0;
+            }
+
+            10% {
+                transform: translate(-50%, -50%) translateY(-10px) scale(1.1);
+                opacity: 1;
+            }
+
+            80% {
+                transform: translate(-50%, -50%) translateY(-40px) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateY(-80px) scale(1.05);
+                opacity: 0;
+            }
+        }
+
         .floating-text {
-            position: fixed; font-size: 2.2rem; font-weight: 900; pointer-events: none; z-index: 9999; left: 50%; top: 50%;
+            position: fixed;
+            font-size: 2.2rem;
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 9999;
+            left: 50%;
+            top: 50%;
             animation: popUpFade 2.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-shadow: 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000;
         }
-        .float-dmg { color: #EF4444; }
-        .float-heal { color: #10B981; font-size: 1.6rem; }
-        .float-score { color: #FBBF24; font-size: 2.8rem; }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-15px) rotate(-1deg); }
-            40%, 80% { transform: translateX(15px) rotate(1deg); }
+
+        .float-dmg {
+            color: #EF4444;
         }
-        .shake-active { animation: shake 0.4s; }
+
+        .float-heal {
+            color: #10B981;
+            font-size: 1.6rem;
+        }
+
+        .float-score {
+            color: #FBBF24;
+            font-size: 2.8rem;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-15px) rotate(-1deg);
+            }
+
+            40%,
+            80% {
+                transform: translateX(15px) rotate(1deg);
+            }
+        }
+
+        .shake-active {
+            animation: shake 0.4s;
+        }
     </style>
 
 </head>
@@ -198,14 +530,19 @@
 <body>
     <nav>
         <a href="index.html" class="logo">
-            <img src="images/騙騙不信logo.png" style="height:42px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.3); margin-right:12px;"> 
+            <img src="images/騙騙不信logo.png"
+                style="height:42px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.3); margin-right:12px;">
             騙騙不信
         </a>
         <div class="controls">
-            <button class="tab-btn active" data-id="01M15VG1A8Z67H2H4HNJ668N6Q" data-avatar-id="YQhYp8" data-scene-id="01JCTKCA896FR17K1C57NFF33H">電商詐騙</button>
-            <button class="tab-btn" data-id="01M16NND10JAG3YSS8ZDK5FKYD" data-avatar-id="pLAnKj" data-scene-id="01JCTKQZ2X3P782974Z89WBN51">電話投資詐騙</button>
-            <button class="tab-btn" data-id="01M18146XZWBNV8XJ6Z3G5A2XW" data-avatar-id="yvX5iS" data-scene-id="01JF55WXY99R0A1137NBDH4X2D">路邊推銷</button>
-            <button class="tab-btn" data-id="01M181G26DBT5X3G4R2YY9Y18K" data-avatar-id="WbXy5k" data-scene-id="01J58A46RGFK59J678AHR32R72" data-voice-id="01J7K3EKS6K74Y2XNPGYZ9N8XN">熟人多層次傳銷</button>
+            <button class="tab-btn active" data-id="01M15VG1A8Z67H2H4HNJ668N6Q" data-avatar-id="YQhYp8"
+                data-scene-id="01JCTKCA896FR17K1C57NFF33H">電商詐騙</button>
+            <button class="tab-btn" data-id="01M16NND10JAG3YSS8ZDK5FKYD" data-avatar-id="pLAnKj"
+                data-scene-id="01JCTKQZ2X3P782974Z89WBN51">電話投資詐騙</button>
+            <button class="tab-btn" data-id="01M18146XZWBNV8XJ6Z3G5A2XW" data-avatar-id="yvX5iS"
+                data-scene-id="01JF55WXY99R0A1137NBDH4X2D">路邊推銷</button>
+            <button class="tab-btn" data-id="01M181G26DBT5X3G4R2YY9Y18K" data-avatar-id="WbXy5k"
+                data-scene-id="01J58A46RGFK59J678AHR32R72" data-voice-id="01J7K3EKS6K74Y2XNPGYZ9N8XN">熟人多層次傳銷</button>
         </div>
     </nav>
 
@@ -223,7 +560,9 @@
             <div style="font-size: 2.2rem; color: #F472B6;"><i class="fa-solid fa-heart-pulse fa-beat"></i></div>
             <div class="hp-section">
                 <div class="hp-label"><span>防禦理智線 (Sanity)</span> <span id="hp-text">100 / 100</span></div>
-                <div class="hp-bar-bg"><div class="hp-bar-fill" id="hp-fill"></div></div>
+                <div class="hp-bar-bg">
+                    <div class="hp-bar-fill" id="hp-fill"></div>
+                </div>
             </div>
             <div style="text-align: right; min-width: 100px;">
                 <div style="font-size: 0.9rem; color: #94A3B8; margin-bottom:5px; font-weight:bold;">防詐識破積分</div>
@@ -246,9 +585,12 @@
             </div>
             <div class="chat-log" id="chat-log"></div>
             <form class="chat-form" id="chat-form">
-                <button type="button" id="mic-btn" class="mic-btn" title="語音輸入"><i class="fa-solid fa-microphone"></i></button>
-                <input type="text" id="chat-input" class="chat-input" placeholder="請點擊麥克風 或 鍵盤輸入對話..." autocomplete="off">
-                <button type="submit" id="chat-send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+                <button type="button" id="mic-btn" class="mic-btn" title="語音輸入"><i
+                        class="fa-solid fa-microphone"></i></button>
+                <input type="text" id="chat-input" class="chat-input" placeholder="請點擊麥克風 或 鍵盤輸入對話..."
+                    autocomplete="off">
+                <button type="submit" id="chat-send-btn" class="send-btn"><i
+                        class="fa-solid fa-paper-plane"></i></button>
             </form>
         </div>
     </div>
@@ -301,13 +643,12 @@
             el.className = `floating-text ${styleClass}`;
             el.innerHTML = text;
 
-                        // All text centered in fullscreen HUD
+            // All text centered in fullscreen HUD
             el.style.left = `calc(50% + ${Math.random() * 60 - 30}px)`;
-            el.style.top = `calc(50% + ${Math.random() * 60 - 30}px)`;px`;
-                el.style.top = `${phone.top + 200 + (Math.random() * 100)}px`;
-            }
+            el.style.top = `calc(50% + ${Math.random() * 60 - 30}px)`;
+
             document.body.appendChild(el);
-            setTimeout(() => el.remove(), 1200);
+            setTimeout(() => el.remove(), 2500);
         }
 
         function takeDamage(amount) {
