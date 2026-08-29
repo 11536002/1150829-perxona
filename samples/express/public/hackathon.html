@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>防詐免疫艙 🎯 Hackathon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #FF5E62;
@@ -131,22 +132,66 @@
             display: flex;
             flex: 1;
             padding: 20px;
-            gap: 20px;
-            position: relative;
+            gap: 30px;
             max-width: 1400px;
             width: 100%;
             margin: 0 auto;
+            align-items: stretch;
         }
 
-        /* 左半部：Avatar 渲染區 */
-        .avatar-wrapper {
-            flex: 2;
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
+        /* 視訊手機框 */
+        .phone-frame {
+            flex: 1;
+            background: #000;
+            border-radius: 40px;
+            border: 14px solid #111;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), inset 0 0 0 4px #222;
             position: relative;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-width: 380px;
+            max-width: 450px;
+        }
+
+        .phone-top-bar {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.95rem;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #EF4444;
+            border-radius: 50%;
+            animation: pulse-red 1s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7)
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0)
+            }
+        }
+
+        .avatar-layer {
+            flex: 1;
+            position: relative;
         }
 
         sv-presenter {
@@ -155,9 +200,105 @@
             display: block;
         }
 
+        .phone-bottom-bar {
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.9), transparent);
+            padding: 30px 20px 20px 20px;
+            display: flex;
+            justify-content: space-around;
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            z-index: 5;
+        }
+
+        .phone-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: 0.2s;
+        }
+
+        .phone-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .phone-btn-danger {
+            background: #EF4444;
+        }
+
+        .phone-btn-danger:hover {
+            background: #DC2626;
+        }
+
+        /* 右側面板群 */
+        .right-panes {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 心理戰術解析儀 */
+        .analyzer-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            border: 2px solid var(--primary);
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(255, 94, 98, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .analyzer-header {
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .analyzer-content {
+            background: #F8FAFC;
+            padding: 15px;
+            border-radius: 12px;
+            color: #475569;
+            transition: all 0.3s;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .analyzer-content.scanning {
+            color: #64748B;
+            font-weight: normal;
+        }
+
+        .alert-danger {
+            background: #FEF2F2;
+            color: #991B1B;
+            border-left: 5px solid #EF4444;
+        }
+
+        .alert-warning {
+            background: #FFFBEB;
+            color: #92400E;
+            border-left: 5px solid #F59E0B;
+        }
+
         /* 右半部：聊天區 */
         .chat-panel {
-            flex: 1.2;
+            flex: 1;
             background: var(--panel);
             backdrop-filter: blur(20px);
             border-radius: 24px;
@@ -316,7 +457,7 @@
 <body>
 
     <header>
-        <a href="index.html" class="logo">🌟 防詐免疫道館</a>
+        <a href="index.html" class="logo"><i class="fa-solid fa-shield-cat"></i> 防詐免疫道館</a>
         <div class="nav-tabs" id="nav-tabs">
             <!-- 這些按鈕會依照您的專屬機器人 ID，在背景瞬間切換虛擬人大腦 -->
             <!-- 網購電商詐騙：女性客服、室內場景、正式語速 -->
@@ -343,20 +484,45 @@
     </header>
 
     <div class="container">
-        <div class="avatar-wrapper">
-            <sv-presenter></sv-presenter>
-            <div id="loading-overlay">連線至 Connect API...</div>
+        <!-- 模擬真實視訊通話手機 -->
+        <div class="phone-frame">
+            <div class="phone-top-bar">
+                <span class="pulse-dot"></span> <span id="call-status">正在通話中 00:01</span>
+            </div>
+            <div class="avatar-layer">
+                <sv-presenter></sv-presenter>
+                <div id="loading-overlay">連線至 Connect API...</div>
+            </div>
+            <div class="phone-bottom-bar">
+                <div class="phone-btn"><i class="fa-solid fa-microphone-slash"></i></div>
+                <div class="phone-btn phone-btn-danger"><i class="fa-solid fa-phone-slash"></i></div>
+                <div class="phone-btn"><i class="fa-solid fa-video-slash"></i></div>
+            </div>
         </div>
 
-        <div class="chat-panel">
-            <div class="chat-header" id="current-mode-title">當前模式：網購電商詐騙</div>
-            <div class="chat-log" id="chat-log"></div>
-            <form class="chat-form" id="chat-form">
-                <button type="button" id="mic-btn" class="mic-btn" title="語音輸入">🎤</button>
-                <input type="text" id="chat-input" class="chat-input" placeholder="請輸入對話 或 點擊麥克風說話..."
-                    autocomplete="off">
-                <button type="submit" id="chat-send-btn" class="send-btn">發送</button>
-            </form>
+        <div class="right-panes">
+            <!-- 即時心理戰術解析儀 -->
+            <div class="analyzer-panel">
+                <div class="analyzer-header"><i class="fa-solid fa-radar"></i> 心理戰術解析儀 HUD</div>
+                <div id="analyzer-content" class="analyzer-content scanning">
+                    <i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現話術。
+                </div>
+            </div>
+
+            <!-- 原本的聊天區 -->
+            <div class="chat-panel">
+                <div class="chat-header" id="current-mode-title"><i class="fa-solid fa-cart-shopping"></i> 當前模式：網購電商詐騙
+                </div>
+                <div class="chat-log" id="chat-log"></div>
+                <form class="chat-form" id="chat-form">
+                    <button type="button" id="mic-btn" class="mic-btn" title="語音輸入"><i
+                            class="fa-solid fa-microphone"></i></button>
+                    <input type="text" id="chat-input" class="chat-input" placeholder="請輸入對話 或 點擊麥克風說話..."
+                        autocomplete="off">
+                    <button type="submit" id="chat-send-btn" class="send-btn"><i
+                            class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -545,12 +711,57 @@
 
                     // 送去給 3D 人演出 (交回給 Perxona 官方的語意動作 AI 判斷)
                     await presenter.present(data.reply_text);
+
+                    // 觸發即時戰術解析
+                    analyzeTactic(data.reply_text);
                 }
             } catch (err) {
                 appendMessage("assistant", "（系統錯誤：無法連接至機器人）");
                 presenter.setThinking?.(false);
             }
         });
+
+        // ---------------- 話術解析邏輯 ----------------
+        function analyzeTactic(text) {
+            const analyzer = document.getElementById("analyzer-content");
+            let tactic = null;
+            let level = "warning";
+
+            if (/(扣款|凍結|報警|法院|查封|檢察官|違法|盜用|銀行)/.test(text)) {
+                tactic = "🚨【權威與恐懼威脅】對方利用公權力或系統錯誤，極大化你的杏仁核恐懼，迫使你放棄思考。";
+                level = "danger";
+            } else if (/(時間|今晚|馬上|立刻|最後|倒數|來不及)/.test(text)) {
+                tactic = "⏰【限時焦慮壓迫】對方不給你查證的時間，故意製造限時壓力，逼迫立刻進行交易或匯款。";
+                level = "danger";
+            } else if (/(內線|保證賺|翻倍|賺錢|投資|穩賺|機會|秘密)/.test(text)) {
+                tactic = "💰【FOMO 貪婪誘惑】利用『錯失恐懼症』，描繪虛假的高報酬藍圖，讓你主動掏出積蓄。";
+                level = "warning";
+            } else if (/(死薪水|沒用|廢物|笨|幫我|可憐|拜託|同學|老朋友|人生)/.test(text)) {
+                tactic = "😈【PUA 自尊打擊 / 情感勒索】利用人際關係壓力或貶低你的社會價值，讓你為了證明自己或出於同情而妥協。";
+                level = "warning";
+            }
+
+            if (tactic) {
+                analyzer.className = `analyzer-content alert-${level}`;
+                analyzer.innerHTML = `<i class="fa-solid fa-triangle-exclamation fa-beat"></i> <div><strong>破解戰術：</strong><br>${tactic}</div>`;
+
+                // 10秒後回到掃描狀態
+                setTimeout(() => {
+                    analyzer.className = "analyzer-content scanning";
+                    analyzer.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現話術。`;
+                }, 10000);
+            }
+        }
+
+        // ---------------- 假視訊通話計時器 ----------------
+        let callSeconds = 0;
+        setInterval(() => {
+            callSeconds++;
+            const m = String(Math.floor(callSeconds / 60)).padStart(2, '0');
+            const s = String(callSeconds % 60).padStart(2, '0');
+            const callStatus = document.getElementById("call-status");
+            if (callStatus) callStatus.innerText = `正在通話中 ${m}:${s}`;
+        }, 1000);
 
     </script>
 </body>
