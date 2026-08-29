@@ -6,706 +6,255 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>騙騙不信 | 沉浸式防詐對戰</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --primary: #FF5E62;
-            --secondary: #FF9966;
-            --bg: #fdfbfb;
-            --panel: rgba(255, 255, 255, 0.85);
-            --text: #2D3748;
-            --text-light: #718096;
-            --border: rgba(255, 94, 98, 0.15);
+            --primary: #F43F5E;
+            --primary-hover: #E11D48;
+            --bg-color: #0F172A;
+            --panel-bg: rgba(15, 23, 42, 0.7);
+            --border-color: rgba(255, 255, 255, 0.15);
         }
 
-        body {
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body, html {
             margin: 0;
-            font-family: 'Noto Sans TC', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
+            padding: 0;
+            width: 100vw;
             height: 100vh;
-            overflow: hidden;
-            position: relative;
+            background-color: var(--bg-color);
+            color: #F8FAFC;
+            overflow: hidden; /* 全螢幕無滾動 */
         }
 
-        /* 點綴用背景圓球 */
-        body::before,
-        body::after {
-            content: '';
+        /* 導覽列 (Top Navbar) */
+        nav {
             position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            z-index: -1;
-            animation: float 10s infinite alternate ease-in-out;
-        }
-
-        body::before {
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 94, 98, 0.2);
-            top: -100px;
-            left: -100px;
-        }
-
-        body::after {
-            width: 300px;
-            height: 300px;
-            background: rgba(79, 209, 197, 0.2);
-            bottom: -50px;
-            right: -50px;
-            animation-delay: -5s;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translate(0, 0);
-            }
-
-            100% {
-                transform: translate(30px, 30px);
-            }
-        }
-
-        /* 導覽列 */
-        header {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px);
-            padding: 15px 30px;
+            top: 0; left: 0; right: 0;
+            height: 70px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-            z-index: 10;
+            justify-content: space-between;
+            padding: 0 40px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
+            z-index: 50;
         }
-
         .logo {
-            font-size: 24px;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
+            font-size: 1.4rem; font-weight: 900; color: white; display: flex; align-items: center; text-decoration: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
-
-        .logo:hover {
-            opacity: 0.8;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 12px;
-        }
-
+        .controls { display: flex; gap: 12px; }
         .tab-btn {
-            background: white;
-            border: 2px solid transparent;
-            color: var(--text-light);
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.1); color: #CBD5E1; border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.3s;
+            backdrop-filter: blur(4px); letter-spacing: 1px;
         }
+        .tab-btn:hover { background: rgba(255, 255, 255, 0.2); color: white; transform: translateY(-2px); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0 15px rgba(244, 63, 94, 0.6); }
 
-        .tab-btn:hover {
-            transform: translateY(-2px);
-            color: var(--primary);
-            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.1);
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.3);
-            border: 2px solid transparent;
-        }
-
-        /* 內容區塊 */
-        .container {
-            display: flex;
-            flex: 1;
-            padding: 20px;
-            gap: 30px;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            align-items: stretch;
-            min-height: 0;
-            /* 防止超出視窗，讓內部滾動生效 */
-        }
-
-        /* 視訊手機框 */
-        .phone-frame {
-            flex: 1;
-            background: #000;
-            border-radius: 40px;
-            border: 14px solid #111;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), inset 0 0 0 4px #222;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            min-width: 380px;
-            max-width: 450px;
-        }
-
-        .phone-top-bar {
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 0.95rem;
-            position: absolute;
-            width: 100%;
-            top: 0;
-            z-index: 5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-        }
-
-        .pulse-dot {
-            width: 10px;
-            height: 10px;
-            background: #EF4444;
-            border-radius: 50%;
-            animation: pulse-red 1s infinite;
-        }
-
-        @keyframes pulse-red {
-            0% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7)
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0)
-            }
-        }
-
+        /* 全螢幕 Avatar (底層) */
         .avatar-layer {
-            flex: 1;
-            position: relative;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0;
+            background: radial-gradient(circle at center, #1E293B 0%, #0F172A 100%);
         }
-
         sv-presenter {
-            width: 100%;
-            height: 100%;
-            display: block;
+            width: 100%; height: 100%; object-fit: cover;
         }
-
-        .phone-bottom-bar {
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0.9), transparent);
-            padding: 30px 20px 20px 20px;
-            display: flex;
-            justify-content: space-around;
-            position: absolute;
-            width: 100%;
-            bottom: 0;
-            z-index: 5;
-        }
-
-        .phone-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: 0.2s;
-        }
-
-        .phone-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .phone-btn-danger {
-            background: #EF4444;
-        }
-
-        .phone-btn-danger:hover {
-            background: #DC2626;
-        }
-
-        /* 右側面板群 */
-        .right-panes {
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            min-height: 0;
-            /* 強制不撐破外框 */
-        }
-
-        /* 心理戰術解析儀 */
-        .analyzer-panel {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            border: 2px solid var(--primary);
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(255, 94, 98, 0.15);
-            backdrop-filter: blur(10px);
-        }
-
-        .analyzer-header {
-            font-weight: 900;
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .analyzer-content {
-            background: #F8FAFC;
-            padding: 15px;
-            border-radius: 12px;
-            color: #475569;
-            transition: all 0.3s;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-
-        .analyzer-content.scanning {
-            color: #64748B;
-            font-weight: normal;
-        }
-
-        .alert-danger {
-            background: #FEF2F2;
-            color: #991B1B;
-            border-left: 5px solid #EF4444;
-        }
-
-        .alert-warning {
-            background: #FFFBEB;
-            color: #92400E;
-            border-left: 5px solid #F59E0B;
-        }
-
-        /* 右半部：聊天區 */
-        .chat-panel {
-            flex: 1;
-            background: var(--panel);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            min-height: 0;
-            /* 讓 chat-log 能夠正常滾動 */
-        }
-
-        .chat-header {
-            padding: 20px;
-            background: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            font-weight: 900;
-            color: var(--primary);
-            text-align: center;
-            font-size: 1.1rem;
-        }
-
-        .chat-log {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .msg {
-            max-width: 85%;
-            padding: 12px 18px;
-            border-radius: 20px;
-            font-size: 15px;
-            line-height: 1.5;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-            position: relative;
-        }
-
-        .msg--assistant {
-            background: white;
-            color: var(--text);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .msg--user {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-form {
-            padding: 15px 20px;
-            display: flex;
-            gap: 10px;
-            background: white;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            align-items: center;
-        }
-
-        .chat-input {
-            flex: 1;
-            background: #F1F5F9;
-            border: 1px solid transparent;
-            color: var(--text);
-            padding: 14px 20px;
-            border-radius: 50px;
-            outline: none;
-            font-size: 15px;
-            transition: all 0.3s;
-        }
-
-        .chat-input:focus {
-            background: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255, 94, 98, 0.1);
-        }
-
-        .send-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            padding: 0 25px;
-            height: 45px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(255, 94, 98, 0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(255, 94, 98, 0.3);
-        }
-
-        .mic-btn {
-            background: #F1F5F9;
-            border: none;
-            color: var(--text-light);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .mic-btn:hover {
-            background: #E2E8F0;
-            color: var(--primary);
-        }
-
-        .mic-btn.recording {
-            background: #EF4444;
-            color: white;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            }
-
-            70% {
-                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
-        }
-
+        /* 連線遮罩 */
         #loading-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 1.2rem;
-            z-index: 10;
+            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2rem; font-weight: bold; color: white; z-index: 10;
         }
-
-        /* ----- 遊戲化 UI 與特效 ----- */
-        .game-hud {
-            background: linear-gradient(135deg, #0F172A, #1E293B);
-            color: white;
-            border-radius: 20px;
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            border: 2px solid #334155;
-            margin-bottom: -5px;
-        }
-
-        .hp-section {
-            flex: 1;
-            margin: 0 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .hp-label {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            margin-bottom: 6px;
-            font-size: 0.95rem;
-            color: #E2E8F0;
-        }
-
-        .hp-bar-bg {
-            background: #000;
-            height: 18px;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
-        }
-
-        .hp-bar-fill {
-            background: linear-gradient(90deg, #10B981, #34D399);
-            height: 100%;
-            width: 100%;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
-            box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.3);
-        }
-
-        .hp-bar-fill.warning {
-            background: linear-gradient(90deg, #F59E0B, #FBBF24);
-        }
-
-        .hp-bar-fill.danger {
-            background: linear-gradient(90deg, #EF4444, #F87171);
-            animation: pulse-danger 1s infinite alternate;
-        }
-
-        .score-display {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #FBBF24;
-            text-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
-            line-height: 1;
-        }
-
-        @keyframes pulse-danger {
-            from {
-                opacity: 1;
-            }
-
-            to {
-                opacity: 0.7;
-            }
-        }
-
-        .floating-text {
-            position: fixed;
-            font-size: 1.8rem;
-            font-weight: 900;
-            pointer-events: none;
-            z-index: 9999;
-            animation: popUpFade 1.2s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
-        }
-
-        .float-dmg {
-            color: #EF4444;
-        }
-
-        .float-heal {
-            color: #10B981;
-            font-size: 1.5rem;
-        }
-
-        .float-score {
-            color: #FBBF24;
-            font-size: 2.5rem;
-        }
-
-        @keyframes popUpFade {
-            0% {
-                transform: translate(-50%, -50%) translateY(20px) scale(0.5);
-                opacity: 0;
-            }
-
-            20% {
-                transform: translate(-50%, -50%) translateY(-10px) scale(1.2);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translate(-50%, -50%) translateY(-80px) scale(1);
-                opacity: 0;
-            }
-        }
-
-        @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            20%,
-            60% {
-                transform: translateX(-15px) rotate(-3deg);
-            }
-
-            40%,
-            80% {
-                transform: translateX(15px) rotate(3deg);
-            }
-        }
-
-        .shake-active {
-            animation: shake 0.4s;
-            border-color: #EF4444 !important;
-            box-shadow: 0 0 50px rgba(239, 68, 68, 0.8) !important;
-        }
-
-        /* 螢幕受擊血腥閃爍特效 */
+        /* 受擊紅光 */
         #damage-overlay {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle, transparent 50%, rgba(239, 68, 68, 0.8) 120%);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 8;
-            transition: opacity 0.3s;
+            position: absolute; inset: 0;
+            background: radial-gradient(circle, transparent 30%, rgba(239,68,68,0.7) 120%);
+            opacity: 0; pointer-events: none; z-index: 20; transition: opacity 0.3s;
+        }
+        .damage-flash #damage-overlay { opacity: 1; transition: opacity 0.1s; }
+
+        /* HUD 層 (遊戲化介面) */
+        .hud-layer {
+            position: absolute; inset: 0; top: 70px; pointer-events: none; z-index: 30;
+            display: flex; flex-direction: column; overflow: hidden; padding: 20px;
+        }
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            pointer-events: auto; /* 允許點擊 */
         }
 
-        .damage-flash #damage-overlay {
-            opacity: 1;
-            transition: opacity 0.1s;
+        /* 頂部血條面板 */
+        .game-hud {
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            width: 650px; padding: 12px 25px; display: flex; align-items: center; justify-content: space-between;
         }
+        .hp-section { flex: 1; margin: 0 20px; display: flex; flex-direction: column; justify-content: center; }
+        .hp-label { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 6px; font-size: 1.05rem; color: #E2E8F0; text-shadow: 0 1px 2px #000; }
+        .hp-bar-bg { background: rgba(0,0,0,0.6); height: 20px; border-radius: 10px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.15); box-shadow: inset 0 2px 5px rgba(0,0,0,0.6); }
+        .hp-bar-fill { 
+            background: linear-gradient(90deg, #10B981, #34D399); 
+            height: 100%; width: 100%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s; 
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.4);
+        }
+        .hp-bar-fill.warning { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+        .hp-bar-fill.danger { background: linear-gradient(90deg, #EF4444, #F87171); animation: pulse-danger 1s infinite alternate; }
+        .score-display { font-size: 2rem; font-weight: 900; color: #FBBF24; text-shadow: 0 0 15px rgba(251, 191, 36, 0.8); line-height: 1; margin-top:4px; }
+
+        /* 左側解析儀 */
+        .analyzer-panel {
+            position: absolute; top: 120px; left: 40px; width: 420px; max-height: calc(100vh - 180px);
+            padding: 22px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;
+        }
+        .analyzer-panel::-webkit-scrollbar { display: none; }
+        .analyzer-header { font-weight: 900; font-size: 1.25rem; color: #38BDF8; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
+        .analyzer-content { background: rgba(0,0,0,0.4); padding: 18px; border-radius: 12px; font-size: 1.1rem; line-height: 1.5; color: #94A3B8; display: flex; align-items: flex-start; transition: 0.3s; border-left: 5px solid transparent; }
+        .analyzer-content.scanning { color: #38BDF8; border-color: #38BDF8; animation: pulse 2s infinite; }
+        .analyzer-content.alert-warning { background: rgba(245, 158, 11, 0.15); border-color: #F59E0B; color: #FDE68A; }
+        .analyzer-content.alert-danger { background: rgba(239, 68, 68, 0.15); border-color: #EF4444; color: #FECACA; }
+
+        /* 右側巨型對話框 */
+        .chat-panel {
+            position: absolute; bottom: 40px; right: 40px; width: 550px; height: calc(100vh - 180px);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .chat-header {
+            padding: 15px 25px; border-bottom: 1px solid var(--border-color); font-weight: bold; font-size: 1.2rem;
+            color: #F8FAFC; background: rgba(0,0,0,0.3); display: flex; align-items: center; gap: 12px;
+        }
+        .chat-log {
+            flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth;
+        }
+        .chat-log::-webkit-scrollbar { width: 6px; }
+        .chat-log::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        .chat-message {
+            max-width: 85%; padding: 15px 20px; border-radius: 20px; font-size: 1.15rem; line-height: 1.5;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25); word-wrap: break-word; position: relative;
+        }
+        .chat-message.user {
+            align-self: flex-end; background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white; border-bottom-right-radius: 4px;
+        }
+        .chat-message.assistant {
+            align-self: flex-start; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.1);
+            color: white; border-bottom-left-radius: 4px; backdrop-filter: blur(10px);
+        }
+        .chat-form {
+            display: flex; padding: 18px 25px; gap: 15px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border-color);
+        }
+        .chat-input {
+            flex: 1; padding: 15px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1); color: white; font-size: 1.15rem; outline: none; transition: 0.3s;
+        }
+        .chat-input:focus { border-color: var(--primary); background: rgba(255,255,255,0.15); }
+        .chat-input::placeholder { color: #CBD5E1; }
+        .mic-btn, .send-btn {
+            width: 55px; height: 55px; border-radius: 12px; border: none; cursor: pointer; display: flex;
+            justify-content: center; align-items: center; font-size: 1.4rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .mic-btn { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .mic-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
+        .mic-btn.recording { background: #EF4444; color: white; animation: pulse 1.5s infinite; border-color: #EF4444; }
+        .send-btn { background: var(--primary); color: white; }
+        .send-btn:hover { background: var(--primary-hover); transform: scale(1.05); }
+
+        /* 動畫 */
+        @keyframes pulse-danger { from { opacity: 1; } to { opacity: 0.7; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        
+        @keyframes popUpFade {
+            0% { transform: translate(-50%, -50%) translateY(20px) scale(0.5); opacity: 0; }
+            10% { transform: translate(-50%, -50%) translateY(-10px) scale(1.1); opacity: 1; }
+            80% { transform: translate(-50%, -50%) translateY(-40px) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) translateY(-80px) scale(1.05); opacity: 0; }
+        }
+        .floating-text {
+            position: fixed; font-size: 2.2rem; font-weight: 900; pointer-events: none; z-index: 9999; left: 50%; top: 50%;
+            animation: popUpFade 2.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000;
+        }
+        .float-dmg { color: #EF4444; }
+        .float-heal { color: #10B981; font-size: 1.6rem; }
+        .float-score { color: #FBBF24; font-size: 2.8rem; }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-15px) rotate(-1deg); }
+            40%, 80% { transform: translateX(15px) rotate(1deg); }
+        }
+        .shake-active { animation: shake 0.4s; }
     </style>
+
 </head>
 
 <body>
-
-    <header>
-        <a href="index.html" class="logo"><img src="images/騙騙不信logo.png"
-                style="height:35px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.2);"> 騙騙不信</a>
-        <div class="nav-tabs" id="nav-tabs">
-            <!-- 這些按鈕會依照您的專屬機器人 ID，在背景瞬間切換虛擬人大腦 -->
-            <!-- 網購電商詐騙：女性客服、室內場景、正式語速 -->
-            <button class="tab-btn active" data-id="01M15VG6NTAY7TR8BD8EWQNJG7"
-                data-avatar-id="01K6CN7E3D0KBAK1DQBMF397K6" data-scene-id="01K4NYHCV6BK9TZC4C12HSVXJP"
-                data-voice-id="01M146V9S4KTZD2K0W736291BY">
-                網購電商詐騙</button>
-
-            <!-- 電話投資詐騙：男性西裝、豪華室內、自信語速 -->
-            <button class="tab-btn" data-id="01M15VH86B8N19MKC71SD6X8Y4" data-avatar-id="01K4M8SH17VHBRTXWEB2KKYPCS"
-                data-scene-id="01K4NYCSVMHPP5WWE21GMAGYA1" data-voice-id="01M146V9S6HYQ83TYYPNRFA1NY">
-                電話投資詐騙</button>
-
-            <!-- 路邊強迫推銷：休閒男學生、室外街景、活潑輕快 -->
-            <button class="tab-btn" data-id="01M15VKVVYENG4HFDH48Q712D9" data-avatar-id="01K4M8W52RF6N5W81VFJJ10EBC"
-                data-scene-id="01K4NYNCA6AWD0VY74MVCH8B6R" data-voice-id="01M146V9S5WKCV14NR0WQR85E2">
-                路邊推銷直銷</button>
-
-            <!-- 熟人裝熟老鼠會：休閒女性、咖啡廳感覺、輕鬆隨性 -->
-            <button class="tab-btn" data-id="01M15VMYRFZKAZPKH7NZT2BKN5" data-avatar-id="01K4M8R1PK54ATSP7ZWSX475B9"
-                data-scene-id="01K4NYDJED35R2T928Q95630KP" data-voice-id="01M146V9S6HYQ83TYYPNRFA1NX">
-                熟人裝熟老鼠會</button>
+    <nav>
+        <a href="index.html" class="logo">
+            <img src="images/騙騙不信logo.png" style="height:42px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.3); margin-right:12px;"> 
+            騙騙不信
+        </a>
+        <div class="controls">
+            <button class="tab-btn active" data-id="01M15VG1A8Z67H2H4HNJ668N6Q" data-avatar-id="YQhYp8" data-scene-id="01JCTKCA896FR17K1C57NFF33H">電商詐騙</button>
+            <button class="tab-btn" data-id="01M16NND10JAG3YSS8ZDK5FKYD" data-avatar-id="pLAnKj" data-scene-id="01JCTKQZ2X3P782974Z89WBN51">電話投資詐騙</button>
+            <button class="tab-btn" data-id="01M18146XZWBNV8XJ6Z3G5A2XW" data-avatar-id="yvX5iS" data-scene-id="01JF55WXY99R0A1137NBDH4X2D">路邊推銷</button>
+            <button class="tab-btn" data-id="01M181G26DBT5X3G4R2YY9Y18K" data-avatar-id="WbXy5k" data-scene-id="01J58A46RGFK59J678AHR32R72" data-voice-id="01J7K3EKS6K74Y2XNPGYZ9N8XN">熟人多層次傳銷</button>
         </div>
-    </header>
+    </nav>
 
-    <div class="container">
-        <!-- 模擬真實視訊通話手機 -->
-        <div class="phone-frame">
-            <div class="phone-top-bar">
-                <span class="pulse-dot"></span> <span id="call-status">正在通話中 00:01</span>
+    <!-- 全螢幕 Avatar (底層) -->
+    <div class="avatar-layer" id="main-avatar-layer">
+        <sv-presenter></sv-presenter>
+        <div id="loading-overlay">連線至 Connect API...</div>
+        <div id="damage-overlay"></div>
+    </div>
+
+    <!-- HUD 介面層 -->
+    <div class="hud-layer">
+        <!-- 頂部血條 -->
+        <div class="game-hud glass-panel">
+            <div style="font-size: 2.2rem; color: #F472B6;"><i class="fa-solid fa-heart-pulse fa-beat"></i></div>
+            <div class="hp-section">
+                <div class="hp-label"><span>防禦理智線 (Sanity)</span> <span id="hp-text">100 / 100</span></div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill" id="hp-fill"></div></div>
             </div>
-            <div class="avatar-layer">
-                <sv-presenter></sv-presenter>
-                <div id="loading-overlay">連線至 Connect API...</div>
-                <div id="damage-overlay"></div>
-            </div>
-            <div class="phone-bottom-bar">
-                <div class="phone-btn"><i class="fa-solid fa-microphone-slash"></i></div>
-                <div class="phone-btn phone-btn-danger"><i class="fa-solid fa-phone-slash"></i></div>
-                <div class="phone-btn"><i class="fa-solid fa-video-slash"></i></div>
+            <div style="text-align: right; min-width: 100px;">
+                <div style="font-size: 0.9rem; color: #94A3B8; margin-bottom:5px; font-weight:bold;">防詐識破積分</div>
+                <div class="score-display" id="score-text">0</div>
             </div>
         </div>
 
-        <div class="right-panes">
-            <!-- 遊戲化數據面板 HUD -->
-            <div class="game-hud">
-                <div style="font-size: 1.8rem; color: #F472B6;"><i class="fa-solid fa-heart-pulse fa-beat"></i></div>
-                <div class="hp-section">
-                    <div class="hp-label"><span>理智防禦值 (Sanity)</span> <span id="hp-text">100 / 100</span></div>
-                    <div class="hp-bar-bg">
-                        <div class="hp-bar-fill" id="hp-fill"></div>
-                    </div>
-                </div>
-                <div style="text-align: right; min-width: 90px;">
-                    <div style="font-size: 0.75rem; color: #94A3B8; margin-bottom:3px;">防詐識破積分</div>
-                    <div class="score-display" id="score-text">0</div>
-                </div>
+        <!-- 左側 HUD -->
+        <div class="analyzer-panel glass-panel">
+            <div class="analyzer-header"><i class="fa-solid fa-radar fa-spin-pulse"></i> 心理戰術解析儀 HUD</div>
+            <div class="analyzer-content scanning" id="analyzer-content">
+                <i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現新話術。
             </div>
+        </div>
 
-            <!-- 即時心理戰術解析儀 -->
-            <div class="analyzer-panel">
-                <div class="analyzer-header"><i class="fa-solid fa-radar"></i> 心理戰術解析儀 HUD</div>
-                <div id="analyzer-content" class="analyzer-content scanning">
-                    <i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現話術。
-                </div>
+        <!-- 右側大型對話框 -->
+        <div class="chat-panel glass-panel">
+            <div class="chat-header" id="current-mode-title">
+                <i class="fa-solid fa-crosshairs"></i> 當前模式：電商詐騙
             </div>
-
-            <!-- 原本的聊天區 -->
-            <div class="chat-panel">
-                <div class="chat-header" id="current-mode-title"><i class="fa-solid fa-cart-shopping"></i> 當前模式：網購電商詐騙
-                </div>
-                <div class="chat-log" id="chat-log"></div>
-                <form class="chat-form" id="chat-form">
-                    <button type="button" id="mic-btn" class="mic-btn" title="語音輸入"><i
-                            class="fa-solid fa-microphone"></i></button>
-                    <input type="text" id="chat-input" class="chat-input" placeholder="請輸入對話 或 點擊麥克風說話..."
-                        autocomplete="off">
-                    <button type="submit" id="chat-send-btn" class="send-btn"><i
-                            class="fa-solid fa-paper-plane"></i></button>
-                </form>
-            </div>
+            <div class="chat-log" id="chat-log"></div>
+            <form class="chat-form" id="chat-form">
+                <button type="button" id="mic-btn" class="mic-btn" title="語音輸入"><i class="fa-solid fa-microphone"></i></button>
+                <input type="text" id="chat-input" class="chat-input" placeholder="請點擊麥克風 或 鍵盤輸入對話..." autocomplete="off">
+                <button type="submit" id="chat-send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+            </form>
         </div>
     </div>
 
     <script type="module">
+
         // 取得剛剛在 Studio 生成的 ID，或者透過 /api/config 取得預設 ID
         let currentChatbotId = "";
         let audioUnlocked = false;
@@ -752,11 +301,9 @@
             el.className = `floating-text ${styleClass}`;
             el.innerHTML = text;
 
-            if (isCenter) {
-                el.style.left = "50%"; el.style.top = "50%";
-            } else {
-                const phone = document.querySelector(".phone-frame").getBoundingClientRect();
-                el.style.left = `${phone.right - (phone.width / 2) + (Math.random() * 80 - 40)}px`;
+                        // All text centered in fullscreen HUD
+            el.style.left = `calc(50% + ${Math.random() * 60 - 30}px)`;
+            el.style.top = `calc(50% + ${Math.random() * 60 - 30}px)`;px`;
                 el.style.top = `${phone.top + 200 + (Math.random() * 100)}px`;
             }
             document.body.appendChild(el);
@@ -766,7 +313,7 @@
         function takeDamage(amount) {
             if (playerHP <= 0) return;
             playerHP -= amount;
-            const phone = document.querySelector(".phone-frame");
+            const phone = document.getElementById("main-avatar-layer");
             phone.classList.add("shake-active", "damage-flash");
             setTimeout(() => phone.classList.remove("shake-active", "damage-flash"), 400);
             spawnFloatingText(`-${amount} 理智傷害`, "float-dmg");
