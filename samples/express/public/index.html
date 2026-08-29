@@ -1,19 +1,20 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌟 防詐免疫道館 | 拒絕韭菜人生</title>
+  <title>騙騙不信 | 沉浸式防詐演練</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+  <!-- 引入專業的 FontAwesome Icon 套件取代 Emoji -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary: #FF5E62;
-      --secondary: #FF9966;
-      --accent: #4FD1C5;
-      --bg-color: #FAFAFA;
-      --text-dark: #2D3748;
-      --text-light: #718096;
+      --primary: #FF3366;
+      --secondary: #FF9933;
+      --accent: #00F2FE;
+      --dark: #070f1e;
+      --light: #ffffff;
     }
 
     * {
@@ -24,70 +25,48 @@
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-dark);
+      background-color: var(--dark);
+      color: var(--light);
       overflow-x: hidden;
     }
 
-    /* 活潑的動態漸層背景 */
-    .hero-bg {
-      position: absolute;
+    /* ---------------- 背景動態星空特效 ---------------- */
+    #bg-canvas {
+      position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
+      width: 100vw;
       height: 100vh;
-      background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
       z-index: -2;
+      background: radial-gradient(circle at center, #111a2d 0%, #070f1e 100%);
     }
 
-    .blob {
-      position: absolute;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      filter: blur(80px);
-      opacity: 0.3;
-      border-radius: 50%;
-      animation: float 10s infinite alternate ease-in-out;
-      z-index: -1;
-    }
-
-    .blob-1 {
+    /* 跟隨滑鼠的光暈 (Glow Effect) */
+    #cursor-glow {
+      position: fixed;
       width: 500px;
       height: 500px;
-      top: -100px;
-      left: -100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.15) 0%, transparent 60%);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: -1;
+      transition: left 0.1s ease-out, top 0.1s ease-out;
     }
 
-    .blob-2 {
-      width: 400px;
-      height: 400px;
-      bottom: -50px;
-      right: -50px;
-      background: linear-gradient(135deg, #4FD1C5, #3182CE);
-      animation-delay: -5s;
-    }
-
-    @keyframes float {
-      0% {
-        transform: translate(0, 0) scale(1);
-      }
-
-      100% {
-        transform: translate(50px, 30px) scale(1.1);
-      }
-    }
-
+    /* ---------------- 導覽列 ---------------- */
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 20px 50px;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(15px);
+      background: rgba(7, 15, 30, 0.5);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       position: fixed;
       width: 100%;
       top: 0;
       z-index: 100;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
     }
 
     .logo {
@@ -96,259 +75,652 @@
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--text-dark);
-      font-weight: 700;
-      margin-left: 30px;
-      transition: color 0.3s;
-    }
-
-    .nav-links a:hover {
-      color: var(--primary);
-    }
-
-    .hero {
-      min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      text-align: center;
-      padding: 100px 20px 20px 20px;
+      gap: 10px;
     }
 
-    .badge {
-      background: rgba(255, 94, 98, 0.1);
-      color: var(--primary);
-      padding: 8px 16px;
-      border-radius: 50px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-5px);
-      }
-    }
-
-    h1 {
-      font-size: 4rem;
-      font-weight: 900;
-      margin-bottom: 20px;
-      line-height: 1.2;
-      color: var(--text-dark);
-    }
-
-    h1 span {
-      background: linear-gradient(135deg, #4FD1C5, #3182CE);
+    .logo i {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    p.subtitle {
-      font-size: 1.2rem;
-      color: var(--text-light);
-      max-width: 600px;
-      margin-bottom: 40px;
-      line-height: 1.6;
+    .nav-links a {
+      color: var(--light);
+      text-decoration: none;
+      font-weight: 700;
+      margin-left: 30px;
+      transition: 0.3s;
+      padding: 8px 16px;
+      border-radius: 20px;
     }
 
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+    }
+
+    /* ---------------- 首頁 Hero 區 ---------------- */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 100px 50px 0 50px;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .hero-content {
+      flex: 1;
+      z-index: 2;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(90deg, rgba(255, 51, 102, 0.15), rgba(255, 153, 51, 0.15));
+      border: 1px solid rgba(255, 51, 102, 0.4);
+      color: #FF9933;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-weight: 700;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(255, 51, 102, 0.2) inset;
+    }
+
+    h1 {
+      font-size: 4.5rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 25px;
+      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 span {
+      background: linear-gradient(120deg, #00F2FE 0%, #4FACFE 50%, #00F2FE 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shineText 3s linear infinite;
+    }
+
+    @keyframes shineText {
+      to {
+        background-position: 200% center;
+      }
+    }
+
+    /* 打字機遊標特效 */
+    #typing-text::after {
+      content: '|';
+      animation: blink 1s infinite;
+      color: var(--accent);
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      max-width: 500px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    /* 水波紋按鈕特效 */
     .cta-group {
       display: flex;
       gap: 20px;
     }
 
     .btn {
-      padding: 15px 40px;
+      padding: 16px 40px;
       border-radius: 50px;
       font-size: 1.1rem;
       font-weight: 700;
       text-decoration: none;
-      transition: transform 0.3s, box-shadow 0.3s;
-      border: none;
+      position: relative;
+      overflow: hidden;
+      /* 水波紋限制在內 */
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
       cursor: pointer;
+      z-index: 1;
+      border: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
-      box-shadow: 0 10px 20px rgba(255, 94, 98, 0.3);
+      box-shadow: 0 10px 30px rgba(255, 51, 102, 0.4);
     }
 
     .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 25px rgba(255, 94, 98, 0.4);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(255, 51, 102, 0.6);
     }
 
     .btn-outline {
-      background: white;
-      color: var(--text-dark);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-      border: 2px solid white;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
     }
 
     .btn-outline:hover {
-      transform: translateY(-3px);
-      border-color: var(--primary);
-      color: var(--primary);
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
     }
 
-    .features {
-      padding: 80px 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+    /* 按鈕水波紋 (Ripple) CSS */
+    .ripple-span {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple-anim 0.6s linear;
+      pointer-events: none;
     }
 
-    .features-title {
-      text-align: center;
-      font-size: 2.5rem;
-      font-weight: 900;
-      margin-bottom: 50px;
+    @keyframes ripple-anim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-    }
-
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
-      text-align: center;
-      transition: transform 0.3s;
+    /* ---------------- 右側浮動圖片展示區 ---------------- */
+    .hero-gallery {
+      flex: 1;
       position: relative;
-      overflow: hidden;
+      height: 600px;
+      perspective: 1000px;
     }
 
-    .card::before {
+    .floating-img {
+      position: absolute;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      transition: transform 0.1s ease-out;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+      /* 切齊圖片圓角 */
+      background: #000;
+    }
+
+    .floating-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .floating-img:hover img {
+      transform: scale(1.1);
+      /* 圖片懸停放大 */
+    }
+
+    .floating-img::after {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 5px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+      pointer-events: none;
     }
 
-    .card:hover {
-      transform: translateY(-10px);
+    /* 置換成使用者的圖片 */
+    .img-1 {
+      width: 320px;
+      height: 450px;
+      top: 10%;
+      right: 10%;
+      z-index: 3;
+      animation: hover1 6s infinite ease-in-out;
+    }
+
+    .img-2 {
+      width: 280px;
+      height: 200px;
+      top: 55%;
+      left: 0%;
+      z-index: 4;
+      animation: hover2 8s infinite ease-in-out;
+    }
+
+    .img-3 {
+      width: 300px;
+      height: 200px;
+      top: 0%;
+      left: 15%;
+      z-index: 2;
+      animation: hover3 7s infinite ease-in-out;
+    }
+
+    @keyframes hover1 {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-2deg);
+      }
+
+      50% {
+        transform: translateY(-20px) rotate(1deg);
+      }
+    }
+
+    @keyframes hover2 {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(4deg) scale(1);
+      }
+
+      50% {
+        transform: translateY(-15px) rotate(6deg) scale(1.05);
+      }
+    }
+
+    @keyframes hover3 {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-4deg);
+      }
+
+      50% {
+        transform: translateY(15px) rotate(-6deg);
+      }
+    }
+
+    /* ---------------- 卡片特效 (滑鼠追蹤光暈 & 3D 傾斜) ---------------- */
+    .features {
+      padding: 100px 50px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 60px;
+      font-weight: 900;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+    }
+
+    .card-container {
+      perspective: 1000px;
+    }
+
+    /* 卡片光暈 (Mouse tracking radial gradient) */
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      padding: 30px;
+      border-radius: 24px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* 追蹤滑鼠的光暈，藉由 JS 動態改變 --mouse-x 和 --mouse-y */
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 255, 255, 0.06), transparent 40%);
+      z-index: 0;
+      pointer-events: none;
     }
 
     .card-icon {
-      font-size: 3rem;
-      margin-bottom: 20px;
+      font-size: 3.5rem;
+      margin-bottom: 15px;
+      transform: translateZ(50px);
+      text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      position: relative;
+      z-index: 1;
     }
 
     .card h3 {
       font-size: 1.5rem;
-      margin-bottom: 15px;
-      font-weight: 700;
+      margin-bottom: 12px;
+      transform: translateZ(30px);
+      color: var(--light);
+      position: relative;
+      z-index: 1;
     }
 
     .card p {
-      color: var(--text-light);
+      color: #94a3b8;
       line-height: 1.6;
-    }
-
-    .edu-banner {
-      background: linear-gradient(135deg, #4FD1C5, #3182CE);
-      padding: 60px 20px;
-      text-align: center;
-      color: white;
-      border-radius: 30px;
-      max-width: 1200px;
-      margin: 0 auto 80px auto;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .edu-banner h2 {
-      font-size: 2.5rem;
       margin-bottom: 20px;
-      font-weight: 900;
+      transform: translateZ(20px);
+      position: relative;
+      z-index: 1;
+      font-size: 0.95rem;
     }
 
-    .edu-banner p {
-      font-size: 1.2rem;
-      max-width: 700px;
-      margin: 0 auto 30px auto;
-      opacity: 0.9;
+    .card img.scenario-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: translateZ(40px);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card:hover img.scenario-img {
+      transform: translateZ(60px) scale(1.05);
+      /* 3D 立體浮出 + 放大 */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Scroll Reveal 動畫類別 */
+    .reveal {
+      opacity: 0;
+      transform: translateY(60px) scale(0.95);
+      transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
   </style>
 </head>
 
 <body>
-  <div class="hero-bg"></div>
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
+  <!-- 1. 背景 Canvas 渲染分子特效 -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- 2. 燈光跟隨滑鼠 -->
+  <div id="cursor-glow"></div>
 
   <nav>
-    <div class="logo">🌟 防詐免疫道館</div>
+    <div class="logo">
+      <img src="images/騙騙不信logo.png" style="height:45px; border-radius:8px; box-shadow:0 4px 10px rgba(255,94,98,0.3);"> 騙騙不信
+    </div>
     <div class="nav-links">
-      <a href="#features">知識庫</a>
-      <a href="https://165.npa.gov.tw" target="_blank">👮 165 全民防騙網</a>
+      <a href="#features"><i class="fa-solid fa-list-ol"></i> 戰鬥關卡</a>
+      <a href="https://165.npa.gov.tw" target="_blank"><i class="fa-solid fa-phone-volume"></i> 165 通報</a>
     </div>
   </nav>
 
   <section class="hero">
-    <div class="badge">🔥 2026 最新真實詐騙手法還原</div>
-    <h1>拒絕韭菜人生<br><span>3D 沉浸式防騙體驗</span></h1>
-    <p class="subtitle">
-      不說教！不無聊！我們透過最新 AI 虛擬人技術，百分之百還原「網購詐騙、假投顧群、死纏推銷、熟人老鼠會」等真實高壓情境。準備好考驗你的腦波強度了嗎？
-    </p>
-    <div class="cta-group">
-      <a href="hackathon.html" class="btn btn-primary">⚔️ 進入模擬道館</a>
-      <a href="#features" class="btn btn-outline">了解情境</a>
+    <div class="hero-content reveal active">
+      <div class="badge">
+        <i class="fa-solid fa-bolt text-warning"></i> 獨家 3D AI 攻防虛擬對戰
+      </div>
+      <h1>不要再被當韭菜！<br><span id="typing-text"></span></h1>
+      <p class="subtitle">
+        直面體驗「殺豬盤、假投資、無情推銷隊」。透過高壓洗腦情境，找出防禦弱點，強化你的反詐大腦免疫力，最真實的社會模擬器！
+      </p>
+      <div class="cta-group">
+        <a href="hackathon.html" class="btn btn-primary">
+          <i class="fa-solid fa-vr-cardboard"></i> 進入模擬對戰
+        </a>
+        <a href="#features" class="btn btn-outline">
+          <i class="fa-solid fa-arrow-down"></i> 瀏覽情境百科
+        </a>
+      </div>
     </div>
-  </section>
 
-  <section class="edu-banner">
-    <h2>💡 為什麼你需要防詐免疫訓練？</h2>
-    <p>根據刑事局統計，台灣每年因詐騙損失高達數百億！單靠宣導標語已經沒用了，心理學研究顯示，只有透過「壓力下的真實情境模擬」，才能在腦中建立真正的反射防禦神經！</p>
-    <a href="https://165.npa.gov.tw" target="_blank" class="btn btn-outline"
-      style="background: transparent; color: white;">通報平台與宣導專區 ↗</a>
+    <!-- 取代原本的空白，放入您剛上傳的精美預覽圖 -->
+    <div class="hero-gallery reveal active">
+      <div class="floating-img img-1" data-speed="-2">
+        <img src="images/破解投資詐騙.jpg" alt="投資詐騙">
+      </div>
+      <div class="floating-img img-2" data-speed="3">
+        <img src="images/防詐小撇步.jpg" alt="小撇步">
+      </div>
+      <div class="floating-img img-3" data-speed="1.5">
+        <!-- 將原本白色的 165 圖片與深色系背景融合 -->
+        <img src="images/遇到詐欺+撥打165反詐騙專線.jpg" alt="165專線">
+      </div>
+    </div>
   </section>
 
   <section id="features" class="features">
-    <h2 class="features-title">四大高危險關卡</h2>
+    <h2 class="section-title reveal">
+      <i class="fa-solid fa-skull-crossbones" style="color:var(--primary)"></i>
+      四大高壓情境預覽
+    </h2>
     <div class="grid">
-      <div class="card">
-        <div class="card-icon">🛒</div>
-        <h3>網購電商詐騙</h3>
-        <p>「您的帳號被升級成高級經銷商，今晚12點將自動扣款...」利用時間急迫性與金融恐懼，逼你在半夜交出網銀帳號。</p>
+      <div class="card-container reveal">
+        <div class="card tilt-card">
+          <div class="card-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+          <h3>網購電商詐騙</h3>
+          <p>逼真的假客服系統與銀行話術。挑戰緊繃度：「今晚12點不匯款就會被扣款！」</p>
+          <img src="images/提醒重要證件、帳戶 勿提供他人使用-中.jpg" class="scenario-img" alt="證件不離身">
+        </div>
       </div>
-      <div class="card">
-        <div class="card-icon">📈</div>
-        <h3>飆股投資詐騙</h3>
-        <p>「老王分析師給你台積電內線！」利用 FOMO（錯失恐懼症）與同溫層洗腦，一步步誘騙你匯出辛苦存下的第一桶金。</p>
+      <div class="card-container reveal" style="transition-delay: 0.1s;">
+        <div class="card tilt-card">
+          <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <h3>飆股投資詐騙</h3>
+          <p>重金打造投顧老師群組。「台積電內線，只給VIP會員，先匯10萬！」你挺得住嗎？</p>
+          <img src="images/破解投資詐騙.jpg" class="scenario-img" alt="投資群組">
+        </div>
       </div>
-      <div class="card">
-        <div class="card-icon">🛍️</div>
-        <h3>路邊強迫推銷</h3>
-        <p>「同學幫忙填個問卷，我差一組就能下班了...」利用台灣人的同情心與不好意思拒絕，鎖定落單學生與路人進行強迫推銷。</p>
+      <div class="card-container reveal" style="transition-delay: 0.2s;">
+        <div class="card tilt-card">
+          <div class="card-icon"><i class="fa-solid fa-store"></i></div>
+          <h3>路邊強迫推銷</h3>
+          <p>熙來攘往的戶外街景。「幫我填個問卷嘛拜託啦...」不擅長拒絕的你，能逃避勒索嗎？</p>
+          <img src="images/【拒絕不當行銷】-中.jpg" class="scenario-img" alt="推銷">
+        </div>
       </div>
-      <div class="card">
-        <div class="card-icon">🤝</div>
-        <h3>熟人裝熟老鼠會</h3>
-        <p>「你甘願領死薪水一輩子嗎？」利用失聯多年的學生時代情誼，搭配炫富與貶低自尊的 PUA 手法，進行直銷合約洗腦。</p>
+      <div class="card-container reveal" style="transition-delay: 0.3s;">
+        <div class="card tilt-card">
+          <div class="card-icon"><i class="fa-solid fa-users-rays"></i></div>
+          <h3>熟人裝熟老鼠會</h3>
+          <p>多年不見的大學同學爆富。「看你領死薪水好心疼，要有被動收入啦！」極度 PUA 。</p>
+          <img src="images/少年詐欺的民、刑事責任.png" class="scenario-img" alt="刑事責任">
+        </div>
       </div>
     </div>
   </section>
 
+  <script>
+    // ---------------- 1. Canvas 分子背景特效 (高效能版) ----------------
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+
+    function initCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      particles = [];
+      let particleCount = Math.floor(width / 20);
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: Math.random() * 2 + 0.5,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          color: Math.random() > 0.3 ? '#00F2FE' : '#FF3366'
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, width, height);
+
+      particles.forEach((p, index) => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = 0.6;
+        ctx.fill();
+
+        for (let j = index + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = p.color;
+            ctx.globalAlpha = 1 - (dist / 120);
+            ctx.stroke();
+          }
+        }
+      });
+      requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener('resize', initCanvas);
+    initCanvas();
+    drawParticles();
+
+    // ---------------- 2. 滑鼠游標光暈 ----------------
+    const cursorGlow = document.getElementById('cursor-glow');
+    const floatingImages = document.querySelectorAll('.floating-img');
+
+    document.addEventListener('mousemove', (e) => {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      cursorGlow.style.left = mouseX + 'px';
+      cursorGlow.style.top = mouseY + 'px';
+
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      floatingImages.forEach(img => {
+        const speed = img.getAttribute('data-speed');
+        const x = (mouseX - centerX) * speed / 80;
+        const y = (mouseY - centerY) * speed / 80;
+        img.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
+
+    // ---------------- 3. 卡片 3D 傾斜 & 光暈追蹤 (Vanilla Tilt) ----------------
+    const cards = document.querySelectorAll('.tilt-card');
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // 設定 CSS 變數，達成滑鼠光暈效果
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+
+        // 計算 3D 旋轉
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -15;
+        const rotateY = ((x - centerX) / centerX) * 15;
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      });
+    });
+
+    // ---------------- 4. 滾動動畫 (Intersection Observer) ----------------
+    const reveals = document.querySelectorAll('.reveal');
+    const revealOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+    const revealOnScroll = new IntersectionObserver(function (entries, observer) {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      });
+    }, revealOptions);
+    reveals.forEach(reveal => revealOnScroll.observe(reveal));
+
+    // ---------------- 5. 水波紋按鈕點擊特效 ----------------
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('mousedown', function (e) {
+        const x = e.clientX - e.target.getBoundingClientRect().left;
+        const y = e.clientY - e.target.getBoundingClientRect().top;
+        const ripple = document.createElement('span');
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.classList.add('ripple-span');
+        this.appendChild(ripple);
+        setTimeout(() => { ripple.remove(); }, 600);
+      });
+    });
+
+    // ---------------- 6. 首頁打字機特效 ----------------
+    const phrases = ["最真實的 3D 對戰模擬", "體驗深層高壓洗腦話術", "強化你反詐大腦免疫力"];
+    let i = 0, j = 0, isDeleting = false;
+    const typingText = document.getElementById('typing-text');
+
+    function typeLoop() {
+      const currentPhrase = phrases[i];
+
+      if (isDeleting) {
+        typingText.innerText = currentPhrase.substring(0, j - 1);
+        j--;
+      } else {
+        typingText.innerText = currentPhrase.substring(0, j + 1);
+        j++;
+      }
+
+      let typeSpeed = isDeleting ? 40 : 100;
+
+      if (!isDeleting && j === currentPhrase.length) {
+        typeSpeed = 2500;
+        isDeleting = true;
+      } else if (isDeleting && j === 0) {
+        isDeleting = false;
+        i = (i + 1) % phrases.length;
+        typeSpeed = 400;
+      }
+      setTimeout(typeLoop, typeSpeed);
+    }
+    setTimeout(typeLoop, 1000);
+
+  </script>
 </body>
 
 </html>
