@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 
 <head>
@@ -7,68 +7,123 @@
     <title>防詐免疫艙 🎯 Hackathon</title>
     <style>
         :root {
-            --primary: #4F46E5;
-            --bg: #0F172A;
-            --panel: #1E293B;
-            --text: #F8FAFC;
+            --primary: #FF5E62;
+            --secondary: #FF9966;
+            --bg: #fdfbfb;
+            --panel: rgba(255, 255, 255, 0.85);
+            --text: #2D3748;
+            --text-light: #718096;
+            --border: rgba(255, 94, 98, 0.15);
         }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
+            font-family: 'Noto Sans TC', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
             color: var(--text);
             display: flex;
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* 點綴用背景圓球 */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: -1;
+            animation: float 10s infinite alternate ease-in-out;
+        }
+
+        body::before {
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 94, 98, 0.2);
+            top: -100px;
+            left: -100px;
+        }
+
+        body::after {
+            width: 300px;
+            height: 300px;
+            background: rgba(79, 209, 197, 0.2);
+            bottom: -50px;
+            right: -50px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(30px, 30px);
+            }
         }
 
         /* 導覽列 */
         header {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            z-index: 10;
         }
 
         .logo {
             font-size: 24px;
-            font-weight: bold;
-            background: linear-gradient(to right, #60A5FA, #A78BFA);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
         }
 
         .nav-tabs {
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
 
         .tab-btn {
-            background: transparent;
-            border: 1px solid #475569;
-            color: #94A3B8;
+            background: white;
+            border: 2px solid transparent;
+            color: var(--text-light);
             padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 50px;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .tab-btn:hover {
-            border-color: #60A5FA;
-            color: #FFF;
+            transform: translateY(-2px);
+            color: var(--primary);
+            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.1);
         }
 
         .tab-btn.active {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
+            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.3);
+            border: 2px solid transparent;
         }
 
         /* 內容區塊 */
@@ -78,16 +133,20 @@
             padding: 20px;
             gap: 20px;
             position: relative;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
         }
 
         /* 左半部：Avatar 渲染區 */
         .avatar-wrapper {
             flex: 2;
-            background: #000;
-            border-radius: 12px;
+            background: white;
+            border-radius: 24px;
             overflow: hidden;
             position: relative;
-            border: 1px solid #334155;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
         sv-presenter {
@@ -98,94 +157,129 @@
 
         /* 右半部：聊天區 */
         .chat-panel {
-            flex: 1;
+            flex: 1.2;
             background: var(--panel);
-            border-radius: 12px;
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
             display: flex;
             flex-direction: column;
-            border: 1px solid #334155;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
         }
 
         .chat-header {
-            padding: 15px;
-            border-bottom: 1px solid #334155;
-            font-weight: bold;
-            color: #60A5FA;
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 900;
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.1rem;
         }
 
         .chat-log {
             flex: 1;
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
         }
 
         .msg {
-            max-width: 80%;
-            padding: 10px 15px;
-            border-radius: 12px;
-            font-size: 14px;
-            line-height: 1.4;
+            max-width: 85%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.5;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            position: relative;
         }
 
         .msg--assistant {
-            background: #334155;
+            background: white;
+            color: var(--text);
             align-self: flex-start;
             border-bottom-left-radius: 4px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .msg--user {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
         }
 
         .chat-form {
-            padding: 15px;
+            padding: 15px 20px;
             display: flex;
             gap: 10px;
-            border-top: 1px solid #334155;
+            background: white;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            align-items: center;
         }
 
         .chat-input {
             flex: 1;
-            background: #0F172A;
-            border: 1px solid #475569;
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
+            background: #F1F5F9;
+            border: 1px solid transparent;
+            color: var(--text);
+            padding: 14px 20px;
+            border-radius: 50px;
+            outline: none;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 94, 98, 0.1);
         }
 
         .send-btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             border: none;
-            padding: 0 20px;
-            border-radius: 8px;
+            padding: 0 25px;
+            height: 45px;
+            border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
+            box-shadow: 0 4px 10px rgba(255, 94, 98, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 94, 98, 0.3);
         }
 
         .mic-btn {
-            background: transparent;
-            border: 1px solid #475569;
-            color: white;
-            padding: 0 15px;
-            border-radius: 8px;
+            background: #F1F5F9;
+            border: none;
+            color: var(--text-light);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s;
         }
 
         .mic-btn:hover {
-            background: #334155;
+            background: #E2E8F0;
+            color: var(--primary);
         }
 
         .mic-btn.recording {
             background: #EF4444;
-            border-color: #EF4444;
+            color: white;
             animation: pulse 1.5s infinite;
         }
 
@@ -206,11 +300,14 @@
         #loading-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
             z-index: 10;
         }
     </style>
@@ -219,7 +316,7 @@
 <body>
 
     <header>
-        <div class="logo">防詐免疫艙 Terminal</div>
+        <a href="index.html" class="logo">🌟 防詐免疫道館</a>
         <div class="nav-tabs" id="nav-tabs">
             <!-- 這些按鈕會依照您的專屬機器人 ID，在背景瞬間切換虛擬人大腦 -->
             <!-- 網購電商詐騙：女性客服、室內場景、正式語速 -->

@@ -1,113 +1,354 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Perxona Connect Kit</title>
-    <style>
-      body {
-        font-family:
-          system-ui,
-          -apple-system,
-          sans-serif;
-        max-width: 40rem;
-        margin: 4rem auto;
-        padding: 0 1.5rem;
-        color: #1a1a1a;
-        line-height: 1.7;
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌟 防詐免疫道館 | 拒絕韭菜人生</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FF5E62;
+      --secondary: #FF9966;
+      --accent: #4FD1C5;
+      --bg-color: #FAFAFA;
+      --text-dark: #2D3748;
+      --text-light: #718096;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    /* 活潑的動態漸層背景 */
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+      z-index: -2;
+    }
+
+    .blob {
+      position: absolute;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      filter: blur(80px);
+      opacity: 0.3;
+      border-radius: 50%;
+      animation: float 10s infinite alternate ease-in-out;
+      z-index: -1;
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      top: -100px;
+      left: -100px;
+    }
+
+    .blob-2 {
+      width: 400px;
+      height: 400px;
+      bottom: -50px;
+      right: -50px;
+      background: linear-gradient(135deg, #4FD1C5, #3182CE);
+      animation-delay: -5s;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate(0, 0) scale(1);
       }
-      h1 {
-        font-size: 1.5rem;
-        margin-bottom: 1.25rem;
+
+      100% {
+        transform: translate(50px, 30px) scale(1.1);
       }
-      ul {
-        padding-left: 1.25rem;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(15px);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 700;
+      margin-left: 30px;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 100px 20px 20px 20px;
+    }
+
+    .badge {
+      background: rgba(255, 94, 98, 0.1);
+      color: var(--primary);
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
       }
-      li {
-        margin-bottom: 1rem;
+
+      50% {
+        transform: translateY(-5px);
       }
-      li:last-child {
-        margin-bottom: 0;
-      }
-      a {
-        color: #6a5ae0;
-      }
-      .badge {
-        display: inline-block;
-        margin-left: 0.15rem;
-        padding: 0.1rem 0.45rem;
-        border-radius: 999px;
-        background: #6a5ae0;
-        color: #fff;
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-        vertical-align: 0.1em;
-      }
-      .prereq {
-        display: block;
-        margin-top: 0.5rem;
-        padding: 0.5rem 0.7rem;
-        border-left: 3px solid #d97706;
-        background: #fffbeb;
-        border-radius: 0 4px 4px 0;
-        font-size: 0.9rem;
-        line-height: 1.5;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Perxona Connect Kit — Demos</h1>
-    <p>
-      Two demos. Both hold a conversation the avatar speaks aloud, on the same
-      backend in <code>server.mjs</code> and the same
-      <code>&lt;sv-presenter&gt;</code> component — what differs is which side
-      of the work you are looking at. <strong>Take them in order:</strong> the
-      chatbot you make in the first is the one the second answers through.
+    }
+
+    h1 {
+      font-size: 4rem;
+      font-weight: 900;
+      margin-bottom: 20px;
+      line-height: 1.2;
+      color: var(--text-dark);
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, #4FD1C5, #3182CE);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 10px 20px rgba(255, 94, 98, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 25px rgba(255, 94, 98, 0.4);
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--text-dark);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      border: 2px solid white;
+    }
+
+    .btn-outline:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .features {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 50px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+      text-align: center;
+      transition: transform 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .card p {
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .edu-banner {
+      background: linear-gradient(135deg, #4FD1C5, #3182CE);
+      padding: 60px 20px;
+      text-align: center;
+      color: white;
+      border-radius: 30px;
+      max-width: 1200px;
+      margin: 0 auto 80px auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .edu-banner h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      font-weight: 900;
+    }
+
+    .edu-banner p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 30px auto;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero-bg"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <nav>
+    <div class="logo">🌟 防詐免疫道館</div>
+    <div class="nav-links">
+      <a href="#features">知識庫</a>
+      <a href="https://165.npa.gov.tw" target="_blank">👮 165 全民防騙網</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="badge">🔥 2026 最新真實詐騙手法還原</div>
+    <h1>拒絕韭菜人生<br><span>3D 沉浸式防騙體驗</span></h1>
+    <p class="subtitle">
+      不說教！不無聊！我們透過最新 AI 虛擬人技術，百分之百還原「網購詐騙、假投顧群、死纏推銷、熟人老鼠會」等真實高壓情境。準備好考驗你的腦波強度了嗎？
     </p>
-    <ul>
-      <li>
-        <a href="demos/studio/">Studio</a>
-        <span class="badge">Start here</span> —
-        <strong>the console you build it from.</strong> Browse the catalog,
-        create and edit chatbots with knowledge files and function tools,
-        interrupt the avatar mid-sentence, watch the SDK's events in a live
-        timeline. A switch chooses who runs the model: a Connect-hosted chatbot
-        or your own <code>LLM_API_KEY</code> — flip it mid-conversation and the
-        same history carries over.
-      </li>
-      <li>
-        <a href="demos/embed/">Embed</a> —
-        <strong>what it looks like once it is live.</strong> A product site with
-        an avatar answering questions on it. No controls, no settings, nothing
-        on the page about its own configuration: the avatar and the chatbot are
-        already chosen by the time a visitor arrives.
-        <span id="embed-prereq" class="prereq" hidden>
-          <strong>Studio first.</strong> Embed answers through a Connect
-          chatbot, and a new account doesn't have one yet — that's the normal
-          first step, not a problem. <a href="demos/studio/">Open Studio</a>,
-          press <strong>Save</strong> on the form it opens for you, then come
-          back here.
-        </span>
-      </li>
-    </ul>
-    <!-- The one thing this page checks. Embed consumes a chatbot; Studio is
-         where you make one, and a brand-new organization has none — so without
-         this a participant clicks the first demo and gets a product page with a
-         hole in it, with the explanation only in a terminal or a devtools
-         console they may not have open. Embed's own page stays silent about its
-         configuration by design; this page is for the developer, never for a
-         visitor, so it is the right place to say it. -->
-    <script type="module">
-      const prereq = document.getElementById("embed-prereq");
-      try {
-        const { chatbotId, mock } = await fetch("/api/config").then((r) =>
-          r.json(),
-        );
-        prereq.hidden = mock || Boolean(chatbotId);
-      } catch {
-        prereq.hidden = true; // server unreachable is a different problem
-      }
-    </script>
-  </body>
+    <div class="cta-group">
+      <a href="hackathon.html" class="btn btn-primary">⚔️ 進入模擬道館</a>
+      <a href="#features" class="btn btn-outline">了解情境</a>
+    </div>
+  </section>
+
+  <section class="edu-banner">
+    <h2>💡 為什麼你需要防詐免疫訓練？</h2>
+    <p>根據刑事局統計，台灣每年因詐騙損失高達數百億！單靠宣導標語已經沒用了，心理學研究顯示，只有透過「壓力下的真實情境模擬」，才能在腦中建立真正的反射防禦神經！</p>
+    <a href="https://165.npa.gov.tw" target="_blank" class="btn btn-outline"
+      style="background: transparent; color: white;">通報平台與宣導專區 ↗</a>
+  </section>
+
+  <section id="features" class="features">
+    <h2 class="features-title">四大高危險關卡</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">🛒</div>
+        <h3>網購電商詐騙</h3>
+        <p>「您的帳號被升級成高級經銷商，今晚12點將自動扣款...」利用時間急迫性與金融恐懼，逼你在半夜交出網銀帳號。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h3>飆股投資詐騙</h3>
+        <p>「老王分析師給你台積電內線！」利用 FOMO（錯失恐懼症）與同溫層洗腦，一步步誘騙你匯出辛苦存下的第一桶金。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛍️</div>
+        <h3>路邊強迫推銷</h3>
+        <p>「同學幫忙填個問卷，我差一組就能下班了...」利用台灣人的同情心與不好意思拒絕，鎖定落單學生與路人進行強迫推銷。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <h3>熟人裝熟老鼠會</h3>
+        <p>「你甘願領死薪水一輩子嗎？」利用失聯多年的學生時代情誼，搭配炫富與貶低自尊的 PUA 手法，進行直銷合約洗腦。</p>
+      </div>
+    </div>
+  </section>
+
+</body>
+
 </html>
