@@ -727,53 +727,96 @@
             }
         });
 
-        // ---------------- 話術解析邏輯 (極致強化版) ----------------
+        // ---------------- 話術解析邏輯 (AI 動態即時生成版) ----------------
         function analyzeTactic(text) {
             const analyzer = document.getElementById("analyzer-content");
             if (!text) return;
 
             let tactics = [];
 
+            // 輔助函式：隨機抽取陣列元素
+            const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
             // 1. 假同理心 / 降低防備
-            if (/(別急|不要緊張|我來幫|放心|別擔心|保證|我教你|協助您|不急)/.test(text)) {
-                tactics.push({ level: "warning", html: "🎭【假同理心/卸除防備】對方刻意安撫情緒（如：您別急），扮演『好人』角色，藉以建立虛假信任感！" });
+            const match1 = text.match(/(別急|不要緊張|我來幫|放心|別擔心|保證|我教你|協助您|不急|處理一下|很快就好)/);
+            if (match1) {
+                const msgs = [
+                    `對方使用「${match1[0]}」試圖安撫您的防備心，這是經典的『好人』話術！`,
+                    `注意！他在用「${match1[0]}」拉近信任關係，實則要讓您在放鬆戒備時聽從指示。`,
+                    `刻意展現同理心：「${match1[0]}」。這是在進行心理學的服從性測試，請保持警戒！`
+                ];
+                tactics.push({ level: "warning", html: `<strong>🎭【假同理心/卸除防備】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
             }
+
             // 2. 指示操作 / 系統設定
-            if (/(網銀|APP|分期|入帳|轉帳|匯款|操作|提款機|ATM|身分證|預扣款|解除設定|批發商)/i.test(text)) {
-                tactics.push({ level: "danger", html: "📲【遠端盲目操控】對方要求您打開網銀或操作APP，這是典型的『解除分期付款/系統錯誤』詐騙起手式！" });
+            const match2 = text.match(/(網銀|APP|分期|入帳|轉帳|匯款|操作|提款機|ATM|身分證|預扣款|解除設定|批發商|中信|郵局)/i);
+            if (match2) {
+                const msgs = [
+                    `危險！對方提到「${match2[0]}」，意圖將您引導至看不見實體的金融介面進行操控。`,
+                    `典型的操作話術！聽到「${match2[0]}」請立刻中斷對話，正規官方不會透過電話指導設定。`,
+                    `一旦對方以「${match2[0]}」為藉口要求操作，99.9%是騙你把錢轉出去的陷阱！`
+                ];
+                tactics.push({ level: "danger", html: `<strong>📲【遠端盲目操控】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
             }
+
             // 3. 權威與恐懼
-            if (/(違法|凍結|報警|法院|查封|檢察官|洗錢|盜用|筆錄|警局|嚴重|責任)/.test(text)) {
-                tactics.push({ level: "danger", html: "🚨【權威與恐懼威脅】對方利用公權力或嚴重後果，極大化你的杏仁核恐懼，迫使你放棄思考。" });
+            const match3 = text.match(/(違法|凍結|報警|法院|查封|檢察官|洗錢|盜用|筆錄|警局|嚴重|責任|吃上官司)/);
+            if (match3) {
+                const msgs = [
+                    `🚨 警報：對方拋出「${match3[0]}」威脅，意圖癱瘓您的理智，激發恐懼反應！`,
+                    `假冒公權力！用「${match3[0]}」壓迫是為了製造恐慌，真正的警察不會打電話要你匯錢。`,
+                    `高壓強迫手段！聽到「${match3[0]}」，這是典型的黑臉戰術，千萬別被情緒綁架。`
+                ];
+                tactics.push({ level: "danger", html: `<strong>🚨【權威與恐懼威脅】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
             }
+
             // 4. 限時焦慮
-            if (/(今晚|12點|馬上|立刻|最後|倒數|來不及|趕快|半夜|逾期)/.test(text)) {
-                tactics.push({ level: "danger", html: "⏰【限時焦慮壓迫】故意製造限時壓力（如：今晚12點），不給你查證的時間，逼迫立刻交易。" });
+            const match4 = text.match(/(今晚|12點|馬上|立刻|最後|倒數|來不及|趕快|半夜|逾期|下班前)/);
+            if (match4) {
+                const msgs = [
+                    `⏰ 倒計時陷阱：刻意加上「${match4[0]}」，讓你沒有時間上網查證或詢問親友！`,
+                    `焦慮放大器！對方用「${match4[0]}」製造急迫感，越急越容易出錯，請深呼吸暫停動作。`,
+                    `『時限』是他們最好的武器！強加「${match4[0]}」的壓力，目的就是逼您立刻匯款。`
+                ];
+                tactics.push({ level: "danger", html: `<strong>⏰【限時焦慮壓迫】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
             }
+
             // 5. 暴利誘惑
-            if (/(內線|保證賺|翻倍|穩賺|機會|秘密|老師|報牌|帶單|獲利|解套)/.test(text)) {
-                tactics.push({ level: "warning", html: "💰【FOMO 貪婪誘惑】描繪虛假的『保證獲利』藍圖，挑起你的錯失恐懼症，讓你主動掏出積蓄。" });
+            const match5 = text.match(/(內線|保證賺|翻倍|穩賺|機會|秘密|老師|報牌|帶單|獲利|解套|財富自由)/);
+            if (match5) {
+                const msgs = [
+                    `高報酬蜜糖：對方利用「${match5[0]}」勾起貪婪，這是標準的殺豬盤養套殺起手式。`,
+                    `天上掉下來的常常是陷阱！「${match5[0]}」的話術是為了讓您喪失風險意識。`,
+                    `投資群組最愛用「${match5[0]}」畫大餅戰術，誘使你投入本金，千萬把持住理智！`
+                ];
+                tactics.push({ level: "warning", html: `<strong>💰【FOMO 貪婪誘惑】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
             }
+
             // 6. 情感勒索/PUA
-            if (/(死薪水|填個問卷|當作幫忙|拜託|同學|差一組|領死薪水|沒出息|上進心|年輕人)/.test(text)) {
-                tactics.push({ level: "warning", html: "😈【PUA 情緒勒索】利用人際社會壓力、貶低你的價值或是乞求同情，讓你覺得『不好意思拒絕』而妥協。" });
+            const match6 = text.match(/(死薪水|填個問卷|當作幫忙|拜託|同學|差一組|領死薪水|沒出息|上進心|年輕人|挺一下)/);
+            if (match6) {
+                const msgs = [
+                    `情緒施壓！對方用「${match6[0]}」進行人脈綁架，讓你覺得不配合就是你的錯。`,
+                    `貶低自尊戰術：以「${match6[0]}」為切入點，摧毀自信，讓你盲目聽從大師指示。`,
+                    `他在對你 PUA！說出「${match6[0]}」是利用罪惡感或人情壓力逼迫你點頭。`
+                ];
+                tactics.push({ level: "warning", html: `<strong>😈【PUA 情緒勒索】</strong><br><span style="color:#64748B;">${getRandom(msgs)}</span>` });
             }
 
             if (tactics.length > 0) {
-                // 取出所有觸發的戰術組成列表 (最多顯示前2個避免畫面過長)
-                const displayTactics = tactics.slice(0, 2).map(t => `<div>${t.html}</div>`).join('<hr style="border-color:rgba(0,0,0,0.05); margin:8px 0;">');
+                // 最多顯示前2個避免畫面過滿
+                const displayTactics = tactics.slice(0, 2).map(t => `<div>${t.html}</div>`).join('<hr style="border-color:rgba(0,0,0,0.05); margin:10px 0;">');
 
                 const highestLevel = tactics.some(t => t.level === "danger") ? "danger" : "warning";
                 const icon = highestLevel === "danger" ? "fa-triangle-exclamation fa-beat" : "fa-lightbulb fa-shake";
 
                 analyzer.className = `analyzer-content alert-${highestLevel}`;
-                analyzer.innerHTML = `<i class="fa-solid ${icon}" style="font-size:1.5rem; margin-right:10px;"></i>
-                                      <div style="flex:1;"><strong>🎯 破解敵方戰術：</strong><br>${displayTactics}</div>`;
+                analyzer.innerHTML = `<i class="fa-solid ${icon}" style="font-size:1.5rem; margin-right:12px; margin-top:5px; height:max-content;"></i>
+                                      <div style="flex:1;"><strong>🎯 本句蘊含戰術破解：</strong><br><div style="margin-top:6px;">${displayTactics}</div></div>`;
 
-                // 延長顯示時間為 15 秒，確保長對話時不會太快消失
                 setTimeout(() => {
                     analyzer.className = "analyzer-content scanning";
-                    analyzer.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現話術。`;
+                    analyzer.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現新話術。`;
                 }, 15000);
             }
         }
