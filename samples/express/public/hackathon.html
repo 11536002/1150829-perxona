@@ -20,205 +20,552 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             width: 100vw;
             height: 100vh;
             background-color: var(--bg-color);
             color: #F8FAFC;
-            overflow: hidden; /* 全螢幕無滾動 */
+            overflow: hidden;
+            /* 全螢幕無滾動 */
         }
 
         /* 導覽列 (Top Navbar) */
         nav {
             position: absolute;
-            top: 0; left: 0; right: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 40px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
             z-index: 50;
         }
+
         .logo {
-            font-size: 1.4rem; font-weight: 900; color: white; display: flex; align-items: center; text-decoration: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: white;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
-        .controls { display: flex; gap: 12px; }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+        }
+
         .tab-btn {
-            background: rgba(255, 255, 255, 0.1); color: #CBD5E1; border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.3s;
-            backdrop-filter: blur(4px); letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #CBD5E1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            backdrop-filter: blur(4px);
+            letter-spacing: 1px;
         }
-        .tab-btn:hover { background: rgba(255, 255, 255, 0.2); color: white; transform: translateY(-2px); }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0 15px rgba(244, 63, 94, 0.6); }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.6);
+        }
 
         /* 全螢幕 Avatar (底層) */
         .avatar-layer {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
             background: radial-gradient(circle at center, #1E293B 0%, #0F172A 100%);
         }
+
         sv-presenter {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+
         #loading-overlay {
-            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.95);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 2rem; font-weight: bold; color: white; z-index: 10;
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            z-index: 10;
         }
+
         #damage-overlay {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle, transparent 30%, rgba(239,68,68,0.7) 120%);
-            opacity: 0; pointer-events: none; z-index: 20; transition: opacity 0.3s;
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, transparent 30%, rgba(239, 68, 68, 0.7) 120%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+            transition: opacity 0.3s;
         }
+
         #victory-overlay {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle, transparent 30%, rgba(16,185,129,0.7) 120%);
-            opacity: 0; pointer-events: none; z-index: 20; transition: opacity 0.3s;
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, transparent 30%, rgba(16, 185, 129, 0.7) 120%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+            transition: opacity 0.3s;
         }
-        .damage-flash #damage-overlay { opacity: 1; transition: opacity 0.1s; }
-        .victory-flash #victory-overlay { opacity: 1; transition: opacity 0.1s; }
+
+        .damage-flash #damage-overlay {
+            opacity: 1;
+            transition: opacity 0.1s;
+        }
+
+        .victory-flash #victory-overlay {
+            opacity: 1;
+            transition: opacity 0.1s;
+        }
 
         /* HUD 層 (遊戲化介面) */
         .hud-layer {
-            position: absolute; inset: 0; top: 70px; pointer-events: none; z-index: 30;
-            display: flex; flex-direction: column; overflow: hidden; padding: 20px;
+            position: absolute;
+            inset: 0;
+            top: 70px;
+            pointer-events: none;
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 20px;
         }
+
         .glass-panel {
             background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            pointer-events: auto; /* 允許點擊 */
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            pointer-events: auto;
+            /* 允許點擊 */
         }
 
         /* 雙方對戰 VS 血條 (頭部) */
         .vs-hud {
-            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-            width: 850px; display: flex; align-items: center; justify-content: space-between;
-            pointer-events: auto; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
-            border-radius: 40px; border: 1px solid rgba(255,255,255,0.2); padding: 15px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 850px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        .hp-side { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .user-side { text-align: left; margin-right: 30px; }
-        .ai-side { text-align: right; margin-left: 30px; }
-        
-        .hp-label { font-weight: bold; margin-bottom: 6px; font-size: 1.1rem; color: #E2E8F0; text-shadow: 0 1px 2px #000; }
-        .hp-bar-bg { background: rgba(0,0,0,0.7); height: 22px; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.15); box-shadow: inset 0 2px 5px rgba(0,0,0,0.6); }
-        .hp-bar-fill { 
-            height: 100%; width: 100%;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            box-shadow: inset 0 2px 5px rgba(255,255,255,0.3);
-        }
-        .hp-user-fill { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
-        .hp-ai-fill { background: linear-gradient(90deg, #F59E0B, #FBBF24); transform-origin: right; float: right; }
-        
-        .hp-user-fill.danger, .hp-ai-fill.danger { background: linear-gradient(90deg, #EF4444, #F87171); animation: pulse-danger 1s infinite alternate; }
 
-        .vs-badge { 
-            font-size: 2.2rem; font-weight: 900; font-style: italic; color: #F43F5E; text-shadow: 0 0 15px rgba(244, 63, 94, 0.8), 2px 2px 0 #000; 
-            margin: 0 10px; line-height: 1;
+        .hp-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .user-side {
+            text-align: left;
+            margin-right: 30px;
+        }
+
+        .ai-side {
+            text-align: right;
+            margin-left: 30px;
+        }
+
+        .hp-label {
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 1.1rem;
+            color: #E2E8F0;
+            text-shadow: 0 1px 2px #000;
+        }
+
+        .hp-bar-bg {
+            background: rgba(0, 0, 0, 0.7);
+            height: 22px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        .hp-bar-fill {
+            height: 100%;
+            width: 100%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .hp-user-fill {
+            background: linear-gradient(90deg, #3B82F6, #60A5FA);
+        }
+
+        .hp-ai-fill {
+            background: linear-gradient(90deg, #F59E0B, #FBBF24);
+            transform-origin: right;
+            float: right;
+        }
+
+        .hp-user-fill.danger,
+        .hp-ai-fill.danger {
+            background: linear-gradient(90deg, #EF4444, #F87171);
+            animation: pulse-danger 1s infinite alternate;
+        }
+
+        .vs-badge {
+            font-size: 2.2rem;
+            font-weight: 900;
+            font-style: italic;
+            color: #F43F5E;
+            text-shadow: 0 0 15px rgba(244, 63, 94, 0.8), 2px 2px 0 #000;
+            margin: 0 10px;
+            line-height: 1;
         }
 
         /* 左側解析儀 */
         .analyzer-panel {
-            position: absolute; top: 120px; left: 40px; width: 420px; max-height: calc(100vh - 180px);
-            padding: 22px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;
+            position: absolute;
+            top: 120px;
+            left: 40px;
+            width: 420px;
+            max-height: calc(100vh - 180px);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
         }
-        .analyzer-panel::-webkit-scrollbar { display: none; }
-        .analyzer-header { font-weight: 900; font-size: 1.25rem; color: #38BDF8; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
-        .analyzer-content { background: rgba(0,0,0,0.5); padding: 18px; border-radius: 12px; font-size: 1.1rem; line-height: 1.5; color: #94A3B8; display: flex; align-items: flex-start; transition: 0.3s; border-left: 5px solid transparent; }
-        .analyzer-content.scanning { color: #38BDF8; border-color: #38BDF8; animation: pulse 2s infinite; }
-        .analyzer-content.alert-warning { background: rgba(245, 158, 11, 0.2); border-color: #F59E0B; color: #FDE68A; }
-        .analyzer-content.alert-danger { background: rgba(239, 68, 68, 0.2); border-color: #EF4444; color: #FECACA; }
+
+        .analyzer-panel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .analyzer-header {
+            font-weight: 900;
+            font-size: 1.25rem;
+            color: #38BDF8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .analyzer-content {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #94A3B8;
+            display: flex;
+            align-items: flex-start;
+            transition: 0.3s;
+            border-left: 5px solid transparent;
+        }
+
+        .analyzer-content.scanning {
+            color: #38BDF8;
+            border-color: #38BDF8;
+            animation: pulse 2s infinite;
+        }
+
+        .analyzer-content.alert-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #F59E0B;
+            color: #FDE68A;
+        }
+
+        .analyzer-content.alert-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #EF4444;
+            color: #FECACA;
+        }
 
         /* 右側巨型對話框 (無底框，純透明容器) */
         .chat-panel {
-            position: absolute; bottom: 30px; right: 40px; width: 600px; height: calc(100vh - 200px);
-            display: flex; flex-direction: column; overflow: hidden; pointer-events: none;
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            width: 600px;
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            pointer-events: none;
         }
+
         .chat-log {
-            flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth;
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
             /* 隱藏滾動條但保持滾動 */
         }
-        .chat-log::-webkit-scrollbar { display: none; }
-        
+
+        .chat-log::-webkit-scrollbar {
+            display: none;
+        }
+
         /* Message Bubbles 帶有玻璃擬態 */
         .chat-message {
-            max-width: 85%; padding: 16px 22px; border-radius: 20px; font-size: 1.15rem; line-height: 1.5;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3); word-wrap: break-word; position: relative; pointer-events: auto;
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            max-width: 85%;
+            padding: 16px 22px;
+            border-radius: 20px;
+            font-size: 1.15rem;
+            line-height: 1.5;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            word-wrap: break-word;
+            position: relative;
+            pointer-events: auto;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
+
         .chat-message.user {
-            align-self: flex-end; background: rgba(59, 130, 246, 0.8); border: 1px solid rgba(59, 130, 246, 0.4);
-            color: white; border-bottom-right-radius: 4px;
+            align-self: flex-end;
+            background: rgba(59, 130, 246, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: white;
+            border-bottom-right-radius: 4px;
         }
+
         .chat-message.assistant {
-            align-self: flex-start; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.15);
-            color: white; border-bottom-left-radius: 4px;
+            align-self: flex-start;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            border-bottom-left-radius: 4px;
         }
-        
+
         /* Input 表單的玻璃擬態設計 */
         .chat-form {
-            display: flex; padding: 15px 20px; gap: 15px; background: rgba(0,0,0,0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
-            pointer-events: auto; align-items: center; margin-top: 15px; margin-right:10px; margin-left: 10px;
+            display: flex;
+            padding: 15px 20px;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            pointer-events: auto;
+            align-items: center;
+            margin-top: 15px;
+            margin-right: 10px;
+            margin-left: 10px;
         }
+
         .chat-input {
-            flex: 1; padding: 10px 15px; border: none; background: transparent; color: white; font-size: 1.15rem; outline: none;
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 1.15rem;
+            outline: none;
         }
-        .chat-input::placeholder { color: #CBD5E1; }
-        .mic-btn, .send-btn {
-            width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; display: flex;
-            justify-content: center; align-items: center; font-size: 1.3rem; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+
+        .chat-input::placeholder {
+            color: #CBD5E1;
         }
-        .mic-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); }
-        .mic-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
-        .mic-btn.recording { background: #EF4444; color: white; animation: pulse 1.5s infinite; border-color: #EF4444; }
-        .send-btn { background: var(--primary); color: white; }
-        .send-btn:hover { background: var(--primary-hover); transform: scale(1.05); }
+
+        .mic-btn,
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .mic-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .mic-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .mic-btn.recording {
+            background: #EF4444;
+            color: white;
+            animation: pulse 1.5s infinite;
+            border-color: #EF4444;
+        }
+
+        .send-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .send-btn:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+        }
 
         /* 動畫 */
-        @keyframes pulse-danger { from { opacity: 1; } to { opacity: 0.7; } }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-        
-        @keyframes popUpFade {
-            0% { transform: translate(-50%, -50%) translateY(20px) scale(0.5); opacity: 0; }
-            10% { transform: translate(-50%, -50%) translateY(-10px) scale(1.1); opacity: 1; }
-            80% { transform: translate(-50%, -50%) translateY(-40px) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) translateY(-80px) scale(1.05); opacity: 0; }
+        @keyframes pulse-danger {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0.7;
+            }
         }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes popUpFade {
+            0% {
+                transform: translate(-50%, -50%) translateY(20px) scale(0.5);
+                opacity: 0;
+            }
+
+            10% {
+                transform: translate(-50%, -50%) translateY(-10px) scale(1.1);
+                opacity: 1;
+            }
+
+            80% {
+                transform: translate(-50%, -50%) translateY(-40px) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateY(-80px) scale(1.05);
+                opacity: 0;
+            }
+        }
+
         .floating-text {
-            position: fixed; font-size: 2.2rem; font-weight: 900; pointer-events: none; z-index: 9999; left: 50%; top: 50%;
+            position: fixed;
+            font-size: 2.2rem;
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 9999;
+            left: 50%;
+            top: 50%;
             animation: popUpFade 2.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-shadow: 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000;
         }
-        .float-dmg { color: #EF4444; }
-        .float-heal { color: #3B82F6; font-size: 1.8rem; }
-        .float-dmg-ai { color: #10B981; font-size: 2rem; }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-15px) rotate(-1deg); }
-            40%, 80% { transform: translateX(15px) rotate(1deg); }
+
+        .float-dmg {
+            color: #EF4444;
         }
-        .shake-active { animation: shake 0.4s; }
+
+        .float-heal {
+            color: #3B82F6;
+            font-size: 1.8rem;
+        }
+
+        .float-dmg-ai {
+            color: #10B981;
+            font-size: 2rem;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-15px) rotate(-1deg);
+            }
+
+            40%,
+            80% {
+                transform: translateX(15px) rotate(1deg);
+            }
+        }
+
+        .shake-active {
+            animation: shake 0.4s;
+        }
     </style>
 </head>
 
 <body>
     <nav>
         <a href="index.html" class="logo">
-            <img src="images/騙騙不信logo.png" style="height:42px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.3); margin-right:12px;"> 
+            <img src="images/騙騙不信logo.png"
+                style="height:42px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.3); margin-right:12px;">
             騙騙不信
         </a>
         <div class="controls">
-            <button class="tab-btn active" data-id="01M15VG1A8Z67H2H4HNJ668N6Q" data-avatar-id="YQhYp8" data-scene-id="01JCTKCA896FR17K1C57NFF33H">電商詐騙</button>
-            <button class="tab-btn" data-id="01M16NND10JAG3YSS8ZDK5FKYD" data-avatar-id="pLAnKj" data-scene-id="01JCTKQZ2X3P782974Z89WBN51">電話投資詐騙</button>
-            <button class="tab-btn" data-id="01M18146XZWBNV8XJ6Z3G5A2XW" data-avatar-id="yvX5iS" data-scene-id="01JF55WXY99R0A1137NBDH4X2D">路邊推銷</button>
-            <button class="tab-btn" data-id="01M181G26DBT5X3G4R2YY9Y18K" data-avatar-id="WbXy5k" data-scene-id="01J58A46RGFK59J678AHR32R72" data-voice-id="01J7K3EKS6K74Y2XNPGYZ9N8XN">熟人多層次傳銷</button>
+            <button class="tab-btn active" data-id="01M15VG1A8Z67H2H4HNJ668N6Q" data-avatar-id="YQhYp8"
+                data-scene-id="01JCTKCA896FR17K1C57NFF33H">電商詐騙</button>
+            <button class="tab-btn" data-id="01M16NND10JAG3YSS8ZDK5FKYD" data-avatar-id="pLAnKj"
+                data-scene-id="01JCTKQZ2X3P782974Z89WBN51">電話投資詐騙</button>
+            <button class="tab-btn" data-id="01M18146XZWBNV8XJ6Z3G5A2XW" data-avatar-id="yvX5iS"
+                data-scene-id="01JF55WXY99R0A1137NBDH4X2D">路邊推銷</button>
+            <button class="tab-btn" data-id="01M181G26DBT5X3G4R2YY9Y18K" data-avatar-id="WbXy5k"
+                data-scene-id="01J58A46RGFK59J678AHR32R72" data-voice-id="01J7K3EKS6K74Y2XNPGYZ9N8XN">熟人多層次傳銷</button>
         </div>
     </nav>
 
@@ -236,16 +583,22 @@
         <div class="vs-hud">
             <!-- 玩家血條 -->
             <div class="hp-side user-side">
-                <div class="hp-label"><span><i class="fa-solid fa-brain"></i> 防禦理智線 (您)</span> <span id="hp-user-text">100 / 100</span></div>
-                <div class="hp-bar-bg"><div class="hp-bar-fill hp-user-fill" id="hp-user-fill"></div></div>
+                <div class="hp-label"><span><i class="fa-solid fa-brain"></i> 防禦理智線 (您)</span> <span
+                        id="hp-user-text">100 / 100</span></div>
+                <div class="hp-bar-bg">
+                    <div class="hp-bar-fill hp-user-fill" id="hp-user-fill"></div>
+                </div>
             </div>
-            
+
             <div class="vs-badge">VS</div>
-            
+
             <!-- 詐騙集團血條 -->
             <div class="hp-side ai-side">
-                <div class="hp-label"><span><span id="hp-ai-text">100 / 100</span> (騙子) 耐心值 <i class="fa-solid fa-mask"></i></span></div>
-                <div class="hp-bar-bg"><div class="hp-bar-fill hp-ai-fill" id="hp-ai-fill"></div></div>
+                <div class="hp-label"><span><span id="hp-ai-text">100 / 100</span> (騙子) 耐心值 <i
+                            class="fa-solid fa-mask"></i></span></div>
+                <div class="hp-bar-bg">
+                    <div class="hp-bar-fill hp-ai-fill" id="hp-ai-fill"></div>
+                </div>
             </div>
         </div>
 
@@ -261,9 +614,11 @@
         <div class="chat-panel">
             <div class="chat-log" id="chat-log"></div>
             <form class="chat-form" id="chat-form">
-                <button type="button" id="mic-btn" class="mic-btn" title="語音輸入"><i class="fa-solid fa-microphone"></i></button>
+                <button type="button" id="mic-btn" class="mic-btn" title="語音輸入"><i
+                        class="fa-solid fa-microphone"></i></button>
                 <input type="text" id="chat-input" class="chat-input" placeholder="對抗詐騙！請輸入您的回應..." autocomplete="off">
-                <button type="submit" id="chat-send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+                <button type="submit" id="chat-send-btn" class="send-btn"><i
+                        class="fa-solid fa-paper-plane"></i></button>
             </form>
         </div>
     </div>
@@ -293,7 +648,7 @@
 
             playerHP = Math.max(0, Math.min(100, playerHP));
             aiHP = Math.max(0, Math.min(100, aiHP));
-            
+
             hpUserText.innerText = `${playerHP} / 100`;
             hpUserFill.style.width = `${playerHP}%`;
             hpUserFill.className = "hp-bar-fill hp-user-fill";
@@ -308,8 +663,7 @@
                 gameOver = true;
                 spawnFloatingText("💥 遭遇洗腦，防線崩潰！", "float-dmg");
                 setTimeout(() => {
-                    alert("☠️ 演練結束！
-您的理智線已歸零，成功被詐騙集團洗腦脫產！請牢記這次的教訓，重整網頁再來一次。");
+                    alert("☠️ 演練結束！\\n您的理智線已歸零，成功被詐騙集團洗腦脫產！請牢記這次的教訓，重整網頁再來一次。");
                 }, 1500);
             } else if (aiHP === 0 && !gameOver) {
                 gameOver = true;
@@ -317,8 +671,7 @@
                 phone.classList.add("shake-active", "victory-flash");
                 spawnFloatingText("🛡️ 成功識破詐騙！", "float-dmg-ai");
                 setTimeout(() => {
-                    alert("🎉 恭喜！
-您成功耗盡了詐騙集團的耐心，識破了騙局！防禦大腦免疫力升級！");
+                    alert("🎉 恭喜！\\n您成功耗盡了詐騙集團的耐心，識破了騙局！防禦大腦免疫力升級！");
                 }, 1500);
             }
         }
@@ -331,7 +684,7 @@
             // All text centered in fullscreen HUD with random offset
             el.style.left = `calc(50% + ${Math.random() * 80 - 40}px)`;
             el.style.top = `calc(50% + ${Math.random() * 80 - 40}px)`;
-            
+
             document.body.appendChild(el);
             setTimeout(() => el.remove(), 2500);
         }
@@ -394,20 +747,20 @@
                 currentChatbotId = newId;
 
                 // 重置遊戲狀態
-                playerHP = 100; aiHP = 100; gameOver = false; 
+                playerHP = 100; aiHP = 100; gameOver = false;
                 chatLog.innerHTML = ""; history.length = 0;
                 updateGameUI();
-                
+
                 loading.style.display = "flex";
                 loading.innerText = "切換情境中...";
-                
+
                 try {
                     const { connect_key } = await request("/api/connect-key");
                     const overrides = {};
-                    if(avatarId) overrides.avatarId = avatarId;
-                    if(sceneId) overrides.sceneId = sceneId;
-                    if(voiceId) overrides.voiceId = voiceId;
-                    
+                    if (avatarId) overrides.avatarId = avatarId;
+                    if (sceneId) overrides.sceneId = sceneId;
+                    if (voiceId) overrides.voiceId = voiceId;
+
                     await presenter.initializeWithConnectKey(connect_key, overrides);
                 } catch (err) {
                     console.error("切換角色失敗:", err);
@@ -440,17 +793,17 @@
                 const { connect_key } = await request("/api/connect-key");
                 const defaultBtn = document.querySelector('.tab-btn.active');
                 currentChatbotId = defaultBtn ? defaultBtn.getAttribute('data-id') : cfg.chatbotId;
-                
+
                 const overrides = {};
-                if(defaultBtn) {
+                if (defaultBtn) {
                     const avatarId = defaultBtn.getAttribute('data-avatar-id');
                     const sceneId = defaultBtn.getAttribute('data-scene-id');
                     const voiceId = defaultBtn.getAttribute('data-voice-id');
-                    if(avatarId) overrides.avatarId = avatarId;
-                    if(sceneId) overrides.sceneId = sceneId;
-                    if(voiceId) overrides.voiceId = voiceId;
+                    if (avatarId) overrides.avatarId = avatarId;
+                    if (sceneId) overrides.sceneId = sceneId;
+                    if (voiceId) overrides.voiceId = voiceId;
                 }
-                
+
                 await presenter.initializeWithConnectKey(connect_key, overrides);
             } catch (err) {
                 console.error(err);
@@ -580,9 +933,9 @@
                 analyzer.className = `analyzer-content alert-${highestLevel}`;
                 analyzer.innerHTML = `<i class="fa-solid ${icon}" style="font-size:1.5rem; margin-right:12px; margin-top:5px; height:max-content;"></i>
                                       <div style="flex:1;"><strong>🎯 本句蘊含戰術破解：</strong><br><div style="margin-top:6px;">${displayTactics}</div></div>`;
-                
+
                 setTimeout(() => {
-                    if(!gameOver) {
+                    if (!gameOver) {
                         analyzer.className = "analyzer-content scanning";
                         analyzer.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 監聽敵方程式中... 尚未發現新話術。`;
                     }
@@ -591,4 +944,5 @@
         }
     </script>
 </body>
+
 </html>
