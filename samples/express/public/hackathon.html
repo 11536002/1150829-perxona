@@ -762,6 +762,8 @@
                     if (sceneId) overrides.sceneId = sceneId;
                     if (voiceId) overrides.voiceId = voiceId;
 
+                    // 確保 Web Component 已初始化
+                    await customElements.whenDefined("sv-presenter");
                     await presenter.initializeWithConnectKey(connect_key, overrides);
                 } catch (err) {
                     console.error("切換角色失敗:", err);
@@ -804,6 +806,9 @@
                     if (sceneId) overrides.sceneId = sceneId;
                     if (voiceId) overrides.voiceId = voiceId;
                 }
+
+                // 等待元件正式註冊完成
+                await customElements.whenDefined("sv-presenter");
 
                 await presenter.initializeWithConnectKey(connect_key, overrides);
             } catch (err) {
