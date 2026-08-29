@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>防詐免疫艙 🎯 Hackathon</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --bg: #0F172A;
+            --panel: #1E293B;
+            --text: #F8FAFC;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 導覽列 */
+        header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(to right, #60A5FA, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 15px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid #475569;
+            color: #94A3B8;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            border-color: #60A5FA;
+            color: #FFF;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
+        }
+
+        /* 內容區塊 */
+        .container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+            position: relative;
+        }
+
+        /* 左半部：Avatar 渲染區 */
+        .avatar-wrapper {
+            flex: 2;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #334155;
+        }
+
+        sv-presenter {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* 右半部：聊天區 */
+        .chat-panel {
+            flex: 1;
+            background: var(--panel);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #334155;
+        }
+
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #334155;
+            font-weight: bold;
+            color: #60A5FA;
+        }
+
+        .chat-log {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .msg--assistant {
+            background: #334155;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg--user {
+            background: var(--primary);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-form {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #334155;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #0F172A;
+            border: 1px solid #475569;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .send-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .mic-btn {
+            background: transparent;
+            border: 1px solid #475569;
+            color: white;
+            padding: 0 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .mic-btn:hover {
+            background: #334155;
+        }
+
+        .mic-btn.recording {
+            background: #EF4444;
+            border-color: #EF4444;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        #loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">防詐免疫艙 Terminal</div>
+        <div class="nav-tabs" id="nav-tabs">
+            <!-- 這些按鈕會依照您的專屬機器人 ID，在背景瞬間切換虛擬人大腦 -->
+            <!-- 網購電商詐騙：女性客服、室內場景、正式語速 -->
+            <button class="tab-btn active" data-id="01M15VG6NTAY7TR8BD8EWQNJG7"
+                data-avatar-id="01K6CN7E3D0KBAK1DQBMF397K6" data-scene-id="01K4NYHCV6BK9TZC4C12HSVXJP"
+                data-voice-id="01M146V9S4KTZD2K0W736291BY">
+                網購電商詐騙</button>
+
+            <!-- 電話投資詐騙：男性西裝、豪華室內、自信語速 -->
+            <button class="tab-btn" data-id="01M15VH86B8N19MKC71SD6X8Y4" data-avatar-id="01K4M8SH17VHBRTXWEB2KKYPCS"
+                data-scene-id="01K4NYCSVMHPP5WWE21GMAGYA1" data-voice-id="01M146V9S6HYQ83TYYPNRFA1NY">
+                電話投資詐騙</button>
+
+            <!-- 路邊強迫推銷：休閒男學生、室外街景、活潑輕快 -->
+            <button class="tab-btn" data-id="01M15VKVVYENG4HFDH48Q712D9" data-avatar-id="01K4M8W52RF6N5W81VFJJ10EBC"
+                data-scene-id="01K4NYNCA6AWD0VY74MVCH8B6R" data-voice-id="01M146V9S5WKCV14NR0WQR85E2">
+                路邊推銷直銷</button>
+
+            <!-- 熟人裝熟老鼠會：休閒女性、咖啡廳感覺、輕鬆隨性 -->
+            <button class="tab-btn" data-id="01M15VMYRFZKAZPKH7NZT2BKN5" data-avatar-id="01K4M8R1PK54ATSP7ZWSX475B9"
+                data-scene-id="01K4NYDJED35R2T928Q95630KP" data-voice-id="01M146V9S6HYQ83TYYPNRFA1NX">
+                熟人裝熟老鼠會</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="avatar-wrapper">
+            <sv-presenter></sv-presenter>
+            <div id="loading-overlay">連線至 Connect API...</div>
+        </div>
+
+        <div class="chat-panel">
+            <div class="chat-header" id="current-mode-title">當前模式：網購電商詐騙</div>
+            <div class="chat-log" id="chat-log"></div>
+            <form class="chat-form" id="chat-form">
+                <button type="button" id="mic-btn" class="mic-btn" title="語音輸入">🎤</button>
+                <input type="text" id="chat-input" class="chat-input" placeholder="請輸入對話 或 點擊麥克風說話..."
+                    autocomplete="off">
+                <button type="submit" id="chat-send-btn" class="send-btn">發送</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        // 取得剛剛在 Studio 生成的 ID，或者透過 /api/config 取得預設 ID
+        let currentChatbotId = "";
+        let audioUnlocked = false;
+        const history = [];
+
+        const presenter = document.querySelector("sv-presenter");
+        const chatLog = document.getElementById("chat-log");
+        const chatForm = document.getElementById("chat-form");
+        const chatInput = document.getElementById("chat-input");
+        const chatSendBtn = document.getElementById("chat-send-btn");
+        const micBtn = document.getElementById("mic-btn");
+        const modeTitle = document.getElementById("current-mode-title");
+        const loading = document.getElementById("loading-overlay");
+
+        // 語音辨識 (Web Speech API) 邏輯
+        let recognition = null;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'zh-TW';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = function () {
+                micBtn.classList.add('recording');
+                chatInput.placeholder = "正在聆聽... (請說話)";
+            };
+
+            recognition.onresult = function (event) {
+                const speechResult = event.results[0][0].transcript;
+                chatInput.value = speechResult;
+                // 自動發送
+                chatSendBtn.click();
+            };
+
+            recognition.onerror = function (event) {
+                console.error("語音辨識錯誤:", event.error);
+                micBtn.classList.remove('recording');
+                chatInput.placeholder = "請輸入對話 或 點擊麥克風說話...";
+            };
+
+            recognition.onend = function () {
+                micBtn.classList.remove('recording');
+                chatInput.placeholder = "請輸入對話 或 點擊麥克風說話...";
+            };
+
+            micBtn.addEventListener('click', () => {
+                if (micBtn.classList.contains('recording')) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            });
+        } else {
+            micBtn.style.display = 'none'; // 瀏覽器不支援時隱藏
+            console.warn("此瀏覽器不支援語音辨識。");
+        }
+
+        // 切換頁籤邏輯
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                // 重置 UI
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+
+                modeTitle.textContent = `當前模式：${e.target.textContent}`;
+
+                // 取得按鈕上綁定的 Chatbot ID，如果沒有填，就用預設的
+                const newId = e.target.getAttribute('data-id');
+                if (newId) currentChatbotId = newId;
+
+                // 切換 Avatar 與背景
+                const avatarId = e.target.getAttribute('data-avatar-id');
+                const sceneId = e.target.getAttribute('data-scene-id');
+                const voiceId = e.target.getAttribute('data-voice-id');
+
+                if (avatarId && sceneId) {
+                    try {
+                        loading.style.display = "flex";
+                        loading.textContent = "切換時空與角色中...";
+                        const { connect_key } = await request("/api/connect-key");
+                        await presenter.initializeWithConnectKey(connect_key, {
+                            avatarId: avatarId,
+                            sceneId: sceneId,
+                            voiceId: voiceId
+                        });
+                    } catch (err) {
+                        console.error("模型切換失敗", err);
+                        loading.style.display = "none";
+                    }
+                }
+
+                // 清空對話框
+                chatLog.innerHTML = "";
+                history.length = 0;
+                appendMessage("assistant", `已切換至【${e.target.textContent}】情境，請開始對話。`);
+            });
+        });
+
+        function appendMessage(role, text) {
+            const el = document.createElement("div");
+            el.className = `msg msg--${role}`;
+            el.textContent = text;
+            chatLog.appendChild(el);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        async function request(path, body) {
+            const res = await fetch(path, body && {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(data.details ?? data.error ?? res.statusText);
+            }
+            return data;
+        }
+
+        // 啟動與連線機制 (模仿官方 Embed)
+        async function start() {
+            try {
+                const cfg = await request("/api/config");
+                // 初始化載入引擎
+                await new Promise((resolve) => {
+                    const script = document.createElement("script");
+                    script.type = "module";
+                    script.src = cfg.presenterUrl;
+                    script.onload = resolve;
+                    document.head.append(script);
+                });
+
+                // 監聽 Ready 事件
+                presenter.addEventListener("PRESENTER_STATUS", (e) => {
+                    if (e.detail?.status === "Ready") {
+                        loading.style.display = "none";
+                        appendMessage("assistant", "系統連線成功，請開始您的防詐測試。");
+                    }
+                });
+
+                const { connect_key } = await request("/api/connect-key");
+                await presenter.initializeWithConnectKey(connect_key, cfg.fixedTarget);
+
+                // 預設抓系統的 chatbotId (如果按鈕沒綁定的話作為備案)
+                currentChatbotId = cfg.chatbotId;
+
+            } catch (err) {
+                console.error(err);
+                loading.textContent = "連線失敗：" + (err.message || "未知錯誤");
+            }
+        }
+        start();
+
+        // 發送聊天訊息
+        chatForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const text = chatInput.value.trim();
+            if (!text || !currentChatbotId) return;
+
+            chatInput.value = "";
+            appendMessage("user", text);
+            history.push({ role: "user", text });
+
+            presenter.setThinking?.(true);
+
+            if (!audioUnlocked) {
+                await presenter.resumeAudioPlayback?.();
+                audioUnlocked = true;
+            }
+
+            try {
+                // 打後端 API 發訊息給選定的 Chatbot
+                const data = await request(`/api/chatbots/${currentChatbotId}/chat`, {
+                    messages: history.map(h => ({ role: h.role, parts: [{ type: "text", text: h.text }] }))
+                });
+
+                if (data.reply_text) {
+                    appendMessage("assistant", data.reply_text);
+                    history.push({ role: "assistant", text: data.reply_text });
+                    presenter.setThinking?.(false);
+
+                    // 送去給 3D 人演出 (交回給 Perxona 官方的語意動作 AI 判斷)
+                    await presenter.present(data.reply_text);
+                }
+            } catch (err) {
+                appendMessage("assistant", "（系統錯誤：無法連接至機器人）");
+                presenter.setThinking?.(false);
+            }
+        });
+
+    </script>
+</body>
+
+</html>
