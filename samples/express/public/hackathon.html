@@ -619,7 +619,8 @@
 <body>
 
     <header>
-        <a href="index.html" class="logo"><img src="images/騙騙不信logo.png" style="height:35px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.2);"> 騙騙不信</a>
+        <a href="index.html" class="logo"><img src="images/騙騙不信logo.png"
+                style="height:35px; border-radius:6px; box-shadow:0 2px 5px rgba(255,94,98,0.2);"> 騙騙不信</a>
         <div class="nav-tabs" id="nav-tabs">
             <!-- 這些按鈕會依照您的專屬機器人 ID，在背景瞬間切換虛擬人大腦 -->
             <!-- 網購電商詐騙：女性客服、室內場景、正式語速 -->
@@ -960,8 +961,8 @@
                     // 送去給 3D 人演出 (交回給 Perxona 官方的語意動作 AI 判斷)
                     await presenter.present(data.reply_text);
 
-                    // 觸發即時戰術解析
-                    analyzeTactic(data.reply_text);
+                    // 觸發即時戰術解析 (第一句話/開場白不發動攻擊)
+                    analyzeTactic(data.reply_text, history.length > 2);
                 }
             } catch (err) {
                 appendMessage("assistant", "（系統錯誤：無法連接至機器人）");
@@ -970,7 +971,7 @@
         });
 
         // ---------------- 話術解析邏輯 (AI 動態即時生成版) ----------------
-        function analyzeTactic(text) {
+        function analyzeTactic(text, applyGameplay = true) {
             const analyzer = document.getElementById("analyzer-content");
             if (!text) return;
 
@@ -1049,12 +1050,14 @@
                 const highestLevel = tactics.some(t => t.level === "danger") ? "danger" : "warning";
 
                 // --- 遊戲化效果觸發 ---
-                if (highestLevel === "danger") {
-                    takeDamage(15);
-                    gainScore(30);
-                } else {
-                    takeDamage(10);
-                    gainScore(15);
+                if (applyGameplay) {
+                    if (highestLevel === "danger") {
+                        takeDamage(15);
+                        gainScore(30);
+                    } else {
+                        takeDamage(10);
+                        gainScore(15);
+                    }
                 }
 
                 // 最多顯示前2個避免畫面過滿
