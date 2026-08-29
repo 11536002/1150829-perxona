@@ -626,6 +626,7 @@
 
     <script type="module">
         let currentChatbotId = "";
+        let currentAvatarId = "";
         let audioUnlocked = false;
         const history = [];
 
@@ -746,6 +747,7 @@
                 const voiceId = target.getAttribute('data-voice-id');
 
                 currentChatbotId = newId;
+                currentAvatarId = avatarId;
 
                 // 重置遊戲狀態
                 playerHP = 100; aiHP = 100; gameOver = false;
@@ -802,7 +804,10 @@
                     const avatarId = defaultBtn.getAttribute('data-avatar-id');
                     const sceneId = defaultBtn.getAttribute('data-scene-id');
                     const voiceId = defaultBtn.getAttribute('data-voice-id');
-                    if (avatarId) overrides.avatarId = avatarId;
+                    if (avatarId) {
+                        overrides.avatarId = avatarId;
+                        currentAvatarId = avatarId;
+                    }
                     if (sceneId) overrides.sceneId = sceneId;
                     if (voiceId) overrides.voiceId = voiceId;
                 }
@@ -853,6 +858,40 @@
             micBtn.style.display = 'none';
         }
 
+        function injectMotions(text, avatarId) {
+            const isMale = (avatarId === "01K4M8SH17VHBRTXWEB2KKYPCS");
+            const maleMotions = ["01KZAHJ8A3E35AC9R2HWWS46W3", "01KZDY5TMKCP4HMNQRG8W2CDD6", "01KZDY68V5VZ936C1Q6XPG9ZDE"]; // 一般講話
+            const maleReject = ["01K4M9DKBV170XAB1VPAZSATS7"]; // 阻擋/不要
+            const malePlead = ["01KZAHAF8ZNKD3NQHZAXBZTK4Y", "01KZAHJRBV69FA5VSDYWZGZX3H"]; // 懇求/抱歉
+
+            const femaleMotions = ["01KZD8DV4YAJWN1PWX1RF0AYFB", "01KZDY3AD23WVRXG5EBVGYGFHM", "01KZD8EQV7Z1SF0BCTZEWTPTEV"]; // 一般講話
+            const femaleReject = ["01K4M91D724K2DRSBFNW8EBPFA", "01K4M966TXRHH1GD1019WK8J0N"]; // 阻擋/搖頭
+            const femalePlead = ["01K4M91VHDN3YKF2SN10DRR6JR", "01K4M99YW0BDQZ8ZC668VXG1KA"]; // 懇求/抱歉
+
+            const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+            return text.split(/([。！？,，])/).reduce((acc, part) => {
+                if (!part.trim() || /^[。！？,，]$/.test(part)) return acc + part;
+
+                let intent = "talk";
+                if (/(不是|聽我說|不要|誤會|怎麼可能|這不是|沒騙你)/.test(part)) intent = "reject";
+                else if (/(拜託|幫個忙|求求|不好意思|保證|抱歉|真的)/.test(part)) intent = "plead";
+
+                let selectedId;
+                if (isMale) {
+                    if (intent === "reject") selectedId = getRandom(maleReject);
+                    else if (intent === "plead") selectedId = getRandom(malePlead);
+                    else selectedId = getRandom(maleMotions);
+                } else {
+                    if (intent === "reject") selectedId = getRandom(femaleReject);
+                    else if (intent === "plead") selectedId = getRandom(femalePlead);
+                    else selectedId = getRandom(femaleMotions);
+                }
+
+                return acc + ` [MOTION ${selectedId}:1] ` + part;
+            }, "");
+        }
+
         // 發送聊天訊息
         chatForm.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -884,12 +923,13 @@
                 });
 
                 if (data.reply_text) {
-                    appendMessage("assistant", data.reply_text);
                     history.push({ role: "assistant", text: data.reply_text });
+                    const motionText = injectMotions(data.reply_text, currentAvatarId);
+                    await presenter.present(motionText);
+                    appendMessage("assistant", data.reply_text);
                     presenter.setThinking?.(false);
-                    await presenter.present(data.reply_text);
 
-                    // 觸發戰術解析 (開頭幾句不痛下殺手)
+                    // 執行語意流氓戰術解析 (開頭幾句不痛下殺手)
                     analyzeTactic(data.reply_text, history.length > 2);
                 }
             } catch (err) {
