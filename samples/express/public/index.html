@@ -86,6 +86,10 @@
       -webkit-text-fill-color: transparent;
     }
 
+    .logo img {
+      height: 45px;
+    }
+
     .nav-links a {
       color: var(--light);
       text-decoration: none;
@@ -114,7 +118,8 @@
     }
 
     .hero-content {
-      flex: 1;
+      flex: 0 1 66%;
+      min-width: 0;
       z-index: 2;
     }
 
@@ -134,7 +139,7 @@
     }
 
     h1 {
-      font-size: 4.5rem;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
       font-weight: 900;
       line-height: 1.1;
       margin-bottom: 25px;
@@ -142,6 +147,7 @@
     }
 
     h1 span {
+      white-space: nowrap;
       background: linear-gradient(120deg, #00F2FE 0%, #4FACFE 50%, #00F2FE 100%);
       background-size: 200% auto;
       -webkit-background-clip: text;
@@ -245,7 +251,7 @@
 
     /* ---------------- 右側浮動圖片展示區 ---------------- */
     .hero-gallery {
-      flex: 1;
+      flex: 0 1 34%;
       position: relative;
       height: 600px;
       perspective: 1000px;
@@ -311,6 +317,82 @@
       left: 15%;
       z-index: 2;
       animation: hover3 7s infinite ease-in-out;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        flex-direction: column;
+        align-items: stretch;
+        padding-top: 140px;
+      }
+
+      .hero-content,
+      .hero-gallery {
+        flex: none;
+        width: 100%;
+      }
+
+      .hero-gallery {
+        height: clamp(300px, 55vw, 500px);
+        margin-top: 30px;
+      }
+
+      .img-1 {
+        width: 55%;
+        height: 75%;
+        right: 5%;
+      }
+
+      .img-2,
+      .img-3 {
+        width: 45%;
+        height: 35%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        padding: 12px 20px;
+        gap: 8px;
+      }
+
+      .logo {
+        font-size: 18px;
+        white-space: nowrap;
+      }
+
+      .logo img {
+        height: 36px;
+      }
+
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .nav-links a {
+        font-size: 12px;
+        margin-left: 0;
+        padding: 4px 6px;
+        white-space: nowrap;
+      }
+
+      .hero {
+        padding: 120px 24px 40px;
+      }
+
+      h1 {
+        font-size: clamp(1.35rem, 6vw, 2.5rem);
+      }
+
+      .cta-group {
+        flex-direction: column;
+      }
+
+      .cta-group .btn {
+        width: 100%;
+      }
     }
 
     @keyframes hover1 {
@@ -473,7 +555,7 @@
 
   <nav>
     <div class="logo">
-      <img src="images/騙騙不信logo.png" style="height:45px; border-radius:8px; box-shadow:0 4px 10px rgba(255,94,98,0.3);"> 騙騙不信
+      <img src="images/騙騙不信logo.png" style="border-radius:8px; box-shadow:0 4px 10px rgba(255,94,98,0.3);"> 騙騙不信
     </div>
     <div class="nav-links">
       <a href="#features"><i class="fa-solid fa-list-ol"></i> 戰鬥關卡</a>
