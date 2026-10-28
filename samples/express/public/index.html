@@ -249,74 +249,32 @@
       }
     }
 
-    /* ---------------- 右側浮動圖片展示區 ---------------- */
+    /* ---------------- 右側圖片卡片 ---------------- */
     .hero-gallery {
       flex: 0 1 34%;
-      position: relative;
-      height: 600px;
-      perspective: 1000px;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      align-items: start;
+      padding-left: 24px;
     }
 
-    .floating-img {
-      position: absolute;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-      transition: transform 0.1s ease-out;
-      border: 2px solid rgba(255, 255, 255, 0.15);
+    .gallery-card {
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       overflow: hidden;
-      /* 切齊圖片圓角 */
-      background: #000;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
     }
 
-    .floating-img img {
+    .gallery-card img {
+      display: block;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
+      height: auto;
     }
 
-    .floating-img:hover img {
-      transform: scale(1.1);
-      /* 圖片懸停放大 */
-    }
-
-    .floating-img::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
-      pointer-events: none;
-    }
-
-    /* 置換成使用者的圖片 */
-    .img-1 {
-      width: 320px;
-      height: 450px;
-      top: 10%;
-      right: 10%;
-      z-index: 3;
-      animation: hover1 6s infinite ease-in-out;
-    }
-
-    .img-2 {
-      width: 280px;
-      height: 200px;
-      top: 55%;
-      left: 0%;
-      z-index: 4;
-      animation: hover2 8s infinite ease-in-out;
-    }
-
-    .img-3 {
-      width: 300px;
-      height: 200px;
-      top: 0%;
-      left: 15%;
-      z-index: 2;
-      animation: hover3 7s infinite ease-in-out;
+    .gallery-banner {
+      grid-column: 1 / -1;
     }
 
     @media (max-width: 900px) {
@@ -333,20 +291,9 @@
       }
 
       .hero-gallery {
-        height: clamp(300px, 55vw, 500px);
-        margin-top: 30px;
-      }
-
-      .img-1 {
-        width: 55%;
-        height: 75%;
-        right: 5%;
-      }
-
-      .img-2,
-      .img-3 {
-        width: 45%;
-        height: 35%;
+        max-width: 640px;
+        padding-left: 0;
+        margin: 40px auto 0;
       }
     }
 
@@ -392,42 +339,6 @@
 
       .cta-group .btn {
         width: 100%;
-      }
-    }
-
-    @keyframes hover1 {
-
-      0%,
-      100% {
-        transform: translateY(0) rotate(-2deg);
-      }
-
-      50% {
-        transform: translateY(-20px) rotate(1deg);
-      }
-    }
-
-    @keyframes hover2 {
-
-      0%,
-      100% {
-        transform: translateY(0) rotate(4deg) scale(1);
-      }
-
-      50% {
-        transform: translateY(-15px) rotate(6deg) scale(1.05);
-      }
-    }
-
-    @keyframes hover3 {
-
-      0%,
-      100% {
-        transform: translateY(0) rotate(-4deg);
-      }
-
-      50% {
-        transform: translateY(15px) rotate(-6deg);
       }
     }
 
@@ -582,15 +493,15 @@
       </div>
     </div>
 
-    <!-- 取代原本的空白，放入您剛上傳的精美預覽圖 -->
+    <!-- 完整呈現防詐海報與通報資訊 -->
     <div class="hero-gallery reveal active">
-      <div class="floating-img img-1" data-speed="-2">
+      <div class="gallery-card">
         <img src="images/破解投資詐騙.jpg" alt="投資詐騙">
       </div>
-      <div class="floating-img img-2" data-speed="3">
+      <div class="gallery-card">
         <img src="images/防詐小撇步.jpg" alt="小撇步">
       </div>
-      <div class="floating-img img-3" data-speed="1.5">
+      <div class="gallery-card gallery-banner">
         <!-- 將原本白色的 165 圖片與深色系背景融合 -->
         <img src="images/遇到詐欺+撥打165反詐騙專線.jpg" alt="165專線">
       </div>
@@ -701,7 +612,6 @@
 
     // ---------------- 2. 滑鼠游標光暈 ----------------
     const cursorGlow = document.getElementById('cursor-glow');
-    const floatingImages = document.querySelectorAll('.floating-img');
 
     document.addEventListener('mousemove', (e) => {
       const mouseX = e.clientX;
@@ -709,15 +619,6 @@
 
       cursorGlow.style.left = mouseX + 'px';
       cursorGlow.style.top = mouseY + 'px';
-
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-      floatingImages.forEach(img => {
-        const speed = img.getAttribute('data-speed');
-        const x = (mouseX - centerX) * speed / 80;
-        const y = (mouseY - centerY) * speed / 80;
-        img.style.transform = `translate(${x}px, ${y}px)`;
-      });
     });
 
     // ---------------- 3. 卡片 3D 傾斜 & 光暈追蹤 (Vanilla Tilt) ----------------
