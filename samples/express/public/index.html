@@ -70,6 +70,7 @@
     }
 
     .logo {
+      text-decoration: none;
       font-size: 24px;
       font-weight: 900;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -271,14 +272,14 @@
       left: 2%;
       top: 3%;
       transform: rotate(-7deg);
-      z-index: 1;
+      z-index: 3;
     }
 
     .gallery-card:nth-child(2) {
       right: 2%;
       top: 24%;
       transform: rotate(7deg);
-      z-index: 2;
+      z-index: 1;
     }
 
     .gallery-card img {
@@ -292,7 +293,7 @@
       left: 4%;
       bottom: 2%;
       transform: rotate(-4deg);
-      z-index: 3;
+      z-index: 2;
     }
 
     @media (max-width: 900px) {
@@ -381,6 +382,15 @@
 
     .card-container {
       perspective: 1000px;
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      border-radius: 24px;
+    }
+
+    .card-container:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 6px;
     }
 
     /* 卡片光暈 (Mouse tracking radial gradient) */
@@ -482,11 +492,11 @@
   <div id="cursor-glow"></div>
 
   <nav>
-    <div class="logo">
+    <a href="index.html" class="logo" aria-label="騙騙不信首頁">
       <img src="images/騙騙不信logo.png" style="border-radius:8px; box-shadow:0 4px 10px rgba(255,94,98,0.3);"> 騙騙不信
-    </div>
+    </a>
     <div class="nav-links">
-      <a href="#features"><i class="fa-solid fa-list-ol"></i> 戰鬥關卡</a>
+      <a href="hackathon.html"><i class="fa-solid fa-list-ol"></i> 戰鬥關卡</a>
       <a href="https://165.npa.gov.tw" target="_blank"><i class="fa-solid fa-phone-volume"></i> 165 通報</a>
     </div>
   </nav>
@@ -531,38 +541,38 @@
       四大高壓情境預覽
     </h2>
     <div class="grid">
-      <div class="card-container reveal">
+      <a href="hackathon.html?scenario=shopping" class="card-container reveal">
         <div class="card tilt-card">
           <div class="card-icon"><i class="fa-solid fa-cart-shopping"></i></div>
           <h3>網購電商詐騙</h3>
           <p>逼真的假客服系統與銀行話術。挑戰緊繃度：「今晚12點不匯款就會被扣款！」</p>
           <img src="images/提醒重要證件、帳戶 勿提供他人使用-中.jpg" class="scenario-img" alt="證件不離身">
         </div>
-      </div>
-      <div class="card-container reveal" style="transition-delay: 0.1s;">
+      </a>
+      <a href="hackathon.html?scenario=investment" class="card-container reveal" style="transition-delay: 0.1s;">
         <div class="card tilt-card">
           <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
           <h3>飆股投資詐騙</h3>
           <p>重金打造投顧老師群組。「台積電內線，只給VIP會員，先匯10萬！」你挺得住嗎？</p>
           <img src="images/破解投資詐騙.jpg" class="scenario-img" alt="投資群組">
         </div>
-      </div>
-      <div class="card-container reveal" style="transition-delay: 0.2s;">
+      </a>
+      <a href="hackathon.html?scenario=sales" class="card-container reveal" style="transition-delay: 0.2s;">
         <div class="card tilt-card">
           <div class="card-icon"><i class="fa-solid fa-store"></i></div>
           <h3>路邊強迫推銷</h3>
           <p>熙來攘往的戶外街景。「幫我填個問卷嘛拜託啦...」不擅長拒絕的你，能逃避勒索嗎？</p>
           <img src="images/【拒絕不當行銷】-中.jpg" class="scenario-img" alt="推銷">
         </div>
-      </div>
-      <div class="card-container reveal" style="transition-delay: 0.3s;">
+      </a>
+      <a href="hackathon.html?scenario=mlm" class="card-container reveal" style="transition-delay: 0.3s;">
         <div class="card tilt-card">
           <div class="card-icon"><i class="fa-solid fa-users-rays"></i></div>
           <h3>熟人裝熟老鼠會</h3>
           <p>多年不見的大學同學爆富。「看你領死薪水好心疼，要有被動收入啦！」極度 PUA 。</p>
           <img src="images/少年詐欺的民、刑事責任.png" class="scenario-img" alt="刑事責任">
         </div>
-      </div>
+      </a>
     </div>
   </section>
 

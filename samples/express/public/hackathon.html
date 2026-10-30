@@ -558,14 +558,14 @@
             騙騙不信
         </a>
         <div class="controls">
-            <button class="tab-btn active" data-id="01M15VG6NTAY7TR8BD8EWQNJG7"
+            <button class="tab-btn active" data-scenario="shopping" data-id="01M15VG6NTAY7TR8BD8EWQNJG7"
                 data-avatar-id="01K4M8SH17VHBRTXWEB2KKYPCS" data-scene-id="01KWVBXE9Q9CZ9FENATQHZYXJV"
                 data-voice-id="0000000000B22N2X7KNEX7FNJ9">電商詐騙</button>
-            <button class="tab-btn" data-id="01M15VH86B8N19MKC71SD6X8Y4" data-avatar-id="01K4M8R1PK54ATSP7ZWSX475B9"
+            <button class="tab-btn" data-scenario="investment" data-id="01M15VH86B8N19MKC71SD6X8Y4" data-avatar-id="01K4M8R1PK54ATSP7ZWSX475B9"
                 data-scene-id="01KWVBVQBZ5FV2BYKDTQ40V9AF" data-voice-id="0000000000JP6G4FH70VQ22FBW">電話投資詐騙</button>
-            <button class="tab-btn" data-id="01M15VKVVYENG4HFDH48Q712D9" data-avatar-id="01K4M8T4RF9HTYE1W0M0957VSJ"
+            <button class="tab-btn" data-scenario="sales" data-id="01M15VKVVYENG4HFDH48Q712D9" data-avatar-id="01K4M8T4RF9HTYE1W0M0957VSJ"
                 data-scene-id="01KQEJD0NJFVM20M588K7D1E9Z" data-voice-id="0000000000RK4PMDRHPG2VT607">路邊推銷</button>
-            <button class="tab-btn" data-id="01M15VMYRFZKAZPKH7NZT2BKN5" data-avatar-id="01K4M8TKBRTP4R1Z8TFGB5MYZN"
+            <button class="tab-btn" data-scenario="mlm" data-id="01M15VMYRFZKAZPKH7NZT2BKN5" data-avatar-id="01K4M8TKBRTP4R1Z8TFGB5MYZN"
                 data-scene-id="01KQEJCMFDVZDHYE3RVV2XHPK3" data-voice-id="01KVAGZWYB22WP19M8M5Z7SKRG">熟人多層次傳銷</button>
         </div>
     </nav>
@@ -732,6 +732,14 @@
             const data = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(data.details ?? data.error ?? res.statusText);
             return data;
+        }
+
+        // 首頁情境卡片直接載入對應關卡；未知參數保留預設關卡。
+        const requestedScenario = new URLSearchParams(window.location.search).get('scenario');
+        const scenarioTabs = [...document.querySelectorAll('.tab-btn')];
+        const requestedTab = scenarioTabs.find(btn => btn.dataset.scenario === requestedScenario);
+        if (requestedTab) {
+            scenarioTabs.forEach(btn => btn.classList.toggle('active', btn === requestedTab));
         }
 
         // 綁定所有 Tab 按鈕 (切換情境模式與角色)
