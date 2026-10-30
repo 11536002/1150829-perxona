@@ -118,7 +118,7 @@
     }
 
     .hero-content {
-      flex: 0 1 66%;
+      flex: 0 1 60%;
       min-width: 0;
       z-index: 2;
     }
@@ -139,7 +139,7 @@
     }
 
     h1 {
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-size: clamp(2.25rem, 4.5vw, 4rem);
       font-weight: 900;
       line-height: 1.1;
       margin-bottom: 25px;
@@ -251,20 +251,34 @@
 
     /* ---------------- 右側圖片卡片 ---------------- */
     .hero-gallery {
-      flex: 0 1 34%;
+      flex: 0 1 40%;
       min-width: 0;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-      align-items: start;
-      padding-left: 24px;
+      position: relative;
+      aspect-ratio: 1 / 1.35;
+      margin-left: 24px;
     }
 
     .gallery-card {
+      position: absolute;
+      width: 58%;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.15);
       overflow: hidden;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .gallery-card:nth-child(1) {
+      left: 2%;
+      top: 3%;
+      transform: rotate(-7deg);
+      z-index: 1;
+    }
+
+    .gallery-card:nth-child(2) {
+      right: 2%;
+      top: 24%;
+      transform: rotate(7deg);
+      z-index: 2;
     }
 
     .gallery-card img {
@@ -274,7 +288,11 @@
     }
 
     .gallery-banner {
-      grid-column: 1 / -1;
+      width: 80%;
+      left: 4%;
+      bottom: 2%;
+      transform: rotate(-4deg);
+      z-index: 3;
     }
 
     @media (max-width: 900px) {
@@ -291,8 +309,7 @@
       }
 
       .hero-gallery {
-        max-width: 640px;
-        padding-left: 0;
+        max-width: 480px;
         margin: 40px auto 0;
       }
     }
